@@ -1,26 +1,21 @@
 @import "tailwindcss";
-@plugin "daisyui" {
-    themes:
-        light --default,
-        dark --prefersdark;
-}
 @plugin "tailwind-scrollbar-hide";
+@plugin "daisyui";
 
 @theme {
     --font-inter: "Inter", sans-serif;
-    --color-color-1: #1a1a1d;
 }
 
 html {
     @apply font-inter;
 }
 
-#root {
-    @apply flex flex-col min-h-screen;
+body {
+    @apply bg-[#1a1a1d];
 }
 
-body {
-    @apply bg-color-1;
+#root {
+    @apply flex flex-col min-h-screen;
 }
 
 input::-webkit-outer-spin-button,

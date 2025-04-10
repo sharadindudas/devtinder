@@ -11,7 +11,7 @@ const Header = () => {
     };
 
     return (
-        <header className="min-h-16 px-3 sm:px-5 w-full bg-color-1 shadow-md shadow-primary/30">
+        <header className="min-h-16 px-3 sm:px-5 w-full bg-[#1a1a1d] shadow-md shadow-primary/30 text-neutral-content">
             <div className="navbar container mx-auto">
                 <div className="flex-1">
                     <Link

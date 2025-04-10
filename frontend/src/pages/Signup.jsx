@@ -41,7 +41,7 @@ const Signup = () => {
                 />
             </div>
             <div className="max-w-md w-full">
-                <h2 className="card-title justify-center text-2xl mt-8">Create an Account</h2>
+                <h2 className="card-title justify-center text-2xl mt-8 text-neutral-content">Create an Account</h2>
                 <form
                     noValidate
                     onSubmit={handleSubmit(onSubmit)}
@@ -98,7 +98,7 @@ const Signup = () => {
                             />
                             {errors?.age && <ToolTipMessage message={errors.age.message} />}
                         </div>
-                        <div className="space-x-4">
+                        <div className="space-x-4 text-neutral-content">
                             <label className="label cursor-pointer justify-start gap-2">
                                 <input
                                     type="radio"
@@ -120,18 +120,18 @@ const Signup = () => {
                         </div>
                     </div>
                     <div className="flex items-center flex-col gap-3 my-4">
-                        <p className="m-auto cursor-pointer font-light">
+                        <p className="m-auto cursor-pointer font-light text-neutral-content">
                             Already Registered ?{" "}
                             <Link
                                 to="/login"
-                                className="font-semibold">
+                                className="font-semibold text-primary">
                                 Log In
                             </Link>
                         </p>
                         <button
                             type="submit"
                             disabled={!isValid || isLoading}
-                            className="btn btn-primary w-full h-11">
+                            className="btn btn-primary w-full h-11 disabled:bg-neutral-content!">
                             {isLoading ? (
                                 <div className="flex items-center gap-2">
                                     <AiOutlineLoading3Quarters className="animate animate-spin text-lg" />

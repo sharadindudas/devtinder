@@ -36,7 +36,7 @@ const Login = () => {
                 />
             </div>
             <div className="max-w-md w-full">
-                <h2 className="card-title justify-center text-2xl mt-8">Login to your Account</h2>
+                <h2 className="card-title justify-center text-2xl mt-8 text-neutral-content">Login to your Account</h2>
                 <form
                     noValidate
                     onSubmit={handleSubmit(onSubmit)}
@@ -73,28 +73,28 @@ const Login = () => {
                         </div>
                     </div>
 
-                    <label className="fieldset-label mb-6">
+                    <label className="fieldset-label mb-6 text-neutral-content">
                         <input
                             type="checkbox"
-                            className="checkbox rounded-sm w-5 h-5"
+                            className="checkbox rounded-sm w-5 h-5 text-neutral-content"
                             defaultChecked
                         />
                         Remember me
                     </label>
 
                     <div className="flex items-center flex-col gap-3">
-                        <p className="m-auto cursor-pointer font-light">
+                        <p className="m-auto cursor-pointer font-light text-neutral-content">
                             Not Registered Yet ?{" "}
                             <Link
                                 to="/signup"
-                                className="font-semibold">
+                                className="font-semibold text-primary">
                                 Sign Up
                             </Link>
                         </p>
                         <button
                             type="submit"
                             disabled={!isValid || isLoading}
-                            className=" btn btn-primary w-full h-11">
+                            className="btn btn-primary w-full h-11 disabled:bg-neutral-content!">
                             {isLoading ? (
                                 <div className="flex items-center gap-2">
                                     <AiOutlineLoading3Quarters className="animate animate-spin text-lg" />
