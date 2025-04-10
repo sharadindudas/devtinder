@@ -10,7 +10,7 @@ const Connections = () => {
         <div className="text-center my-8 max-w-3xl w-full mx-auto px-3">
             {connections?.length === 0 ? (
                 <div className="text-center space-y-5">
-                    <h2 className="sm:text-3xl text-2xl font-bold">No Connections Found!</h2>
+                    <h2 className="sm:text-3xl text-2xl font-bold text-neutral-content">No Connections Found!</h2>
                     <img
                         loading="lazy"
                         src="/assets/empty-connections.svg"

@@ -19,7 +19,7 @@ const ProfileCard = ({ user }) => {
                     <div>
                         <h2 className="text-lg sm:text-xl font-semibold">{name}</h2>
                         <p className="text-sm sm:text-base text-gray-600 sm:mt-1 mb-2">{`${age}, ${gender}`}</p>
-                        <p className="text-gray-300 text-sm sm:text-base">{truncateString(about, 50) || "No description available"}</p>
+                        <p className="text-base-content text-base">{truncateString(about, 50) || "No description available"}</p>
                     </div>
                     <div className="card-actions hidden sm:flex justify-between space-x-2 mt-4">
                         <button className="btn btn-error btn-sm sm:btn-md flex-1">Ignore</button>

@@ -10,7 +10,7 @@ const Feed = () => {
         <div className="flex-1 h-full flex flex-col items-center justify-center overflow-hidden relative my-10 mx-3">
             {feed?.length === 0 ? (
                 <div className="text-center">
-                    <h2 className="sm:text-3xl text-2xl font-bold">No New Users Found!</h2>
+                    <h2 className="sm:text-3xl text-2xl font-bold text-neutral-content">No New Users Found!</h2>
                     <img
                         loading="lazy"
                         src="/assets/empty-feed.svg"
@@ -20,9 +20,9 @@ const Feed = () => {
                 </div>
             ) : (
                 <div className="grid place-items-center">
-                    {feed?.map((user, index) => (
+                    {feed?.map((user) => (
                         <UserCard
-                            key={index}
+                            key={user._id}
                             user={user}
                         />
                     ))}

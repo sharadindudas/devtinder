@@ -21,8 +21,8 @@ const Message = ({ message }) => {
                     />
                 </div>
             </div>
-            <div className={`chat-bubble text-white text-xs sm:text-sm mb-1 whitespace-pre-line break-words`}>{message?.message}</div>
-            <div className="chat-footer opacity-50 text-xs sm:text-sm flex gap-1 items-center">{formattedTime}</div>
+            <div className={`chat-bubble text-xs sm:text-sm mb-1 whitespace-pre-line break-words`}>{message?.message}</div>
+            <div className="chat-footer opacity-50 text-xs sm:text-sm flex gap-1 items-center text-base-content">{formattedTime}</div>
         </div>
     );
 };

@@ -41,7 +41,7 @@ const Header = () => {
                             </div>
                             <ul
                                 tabIndex={0}
-                                className="menu menu-base dropdown-content bg-base-100 rounded-box z-1 w-40 shadow p-0 py-2">
+                                className="menu menu-base dropdown-content bg-base-100 text-base-content rounded-box z-1 w-40 shadow p-0 py-2">
                                 <p className="font-bold px-3">My Account</p>
                                 <div className="divider m-0 mt-1"></div>
                                 <div className="space-y-1">
