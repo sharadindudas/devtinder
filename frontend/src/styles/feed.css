@@ -1,5 +1,5 @@
 .card-container {
-    @apply w-[90vw] max-w-[350px] h-[500px];
+    @apply w-[80vw] max-w-[350px] h-[500px];
 }
 
 .card {

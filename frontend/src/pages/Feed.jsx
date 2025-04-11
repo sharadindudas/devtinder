@@ -8,7 +8,7 @@ const Feed = () => {
     const { feed } = useGlobalStore();
 
     return (
-        <div className="flex-1 h-full flex flex-col items-center justify-center overflow-hidden relative my-10 mx-3">
+        <div className="flex-1 h-full flex flex-col items-center justify-center overflow-hidden relative py-10 mx-3">
             {feed?.length === 0 ? (
                 <div className="text-center">
                     <h2 className="sm:text-3xl text-2xl font-bold text-neutral-content">No New Users Found!</h2>
