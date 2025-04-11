@@ -94,7 +94,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={!isValid || isLoading}
-                            className="btn btn-primary w-full h-11 disabled:bg-neutral-content!">
+                            className="btn btn-primary w-full h-11">
                             {isLoading ? (
                                 <div className="flex items-center gap-2">
                                     <AiOutlineLoading3Quarters className="animate animate-spin text-lg" />
