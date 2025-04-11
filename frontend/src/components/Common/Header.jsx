@@ -11,7 +11,7 @@ const Header = () => {
     };
 
     return (
-        <header className="min-h-16 px-3 sm:px-5 w-full bg-[#1a1a1d] shadow-md shadow-primary/30 text-neutral-content">
+        <header className="min-h-16 px-3 sm:px-5 w-full bg-color-1 shadow-md shadow-primary/30">
             <div className="navbar container mx-auto">
                 <div className="flex-1">
                     <Link
@@ -22,10 +22,11 @@ const Header = () => {
                     </Link>
                 </div>
                 {user ? (
-                    <>
-                        <p className="sm:block hidden mr-2 text-sm">
+                    <div className="flex items-center gap-4 text-sm">
+                        <p className="sm:block hidden">
                             Welcome, <b>{user?.name}</b>
                         </p>
+
                         <div className="dropdown dropdown-end">
                             <div
                                 tabIndex={0}
@@ -40,7 +41,7 @@ const Header = () => {
                             </div>
                             <ul
                                 tabIndex={0}
-                                className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                                className="menu menu-base dropdown-content bg-base-100 rounded-box z-1 w-40 shadow p-0 py-2">
                                 <p className="font-bold px-3">My Account</p>
                                 <div className="divider m-0 mt-1"></div>
                                 <div className="space-y-1">
@@ -59,7 +60,7 @@ const Header = () => {
                                 </div>
                             </ul>
                         </div>
-                    </>
+                    </div>
                 ) : (
                     <button className="btn btn-primary">
                         <Link to="/login">Log In</Link>
