@@ -1,6 +1,7 @@
 import UserCard from "../components/Cards/UserCard";
 import useGetFeed from "../hooks/useGetFeed";
 import { useGlobalStore } from "../store/useStore";
+import "../styles/feed.css";
 
 const Feed = () => {
     useGetFeed();
@@ -19,7 +20,7 @@ const Feed = () => {
                     />
                 </div>
             ) : (
-                <div className="grid place-items-center">
+                <div className="card-container">
                     {feed?.map((user) => (
                         <UserCard
                             key={user._id}

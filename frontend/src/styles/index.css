@@ -27,8 +27,3 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
-
-.user-card {
-    grid-row: 1;
-    grid-column: 1;
-}
