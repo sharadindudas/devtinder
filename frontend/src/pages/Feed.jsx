@@ -20,7 +20,7 @@ const Feed = () => {
                     />
                 </div>
             ) : (
-                <div className="card-container">
+                <div className="grid place-items-center h-[500px]">
                     {feed?.map((user) => (
                         <UserCard
                             key={user._id}

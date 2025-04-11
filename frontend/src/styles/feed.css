@@ -1,7 +1,4 @@
-.card-container {
-    @apply w-[80vw] max-w-[350px] h-[500px];
-}
-
 .card {
-    @apply relative w-[80vw] max-w-[350px] h-[500px];
+    grid-row: 1;
+    grid-column: 1;
 }

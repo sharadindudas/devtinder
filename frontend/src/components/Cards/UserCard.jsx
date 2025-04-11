@@ -9,11 +9,11 @@ const UserCard = ({ user }) => {
     return (
         <TinderCard
             onSwipe={handleSwipe}
-            className="absolute border border-gray-200 rounded-lg overflow-hidden cursor-grab active:cursor-grab"
+            className="card max-w-sm border border-gray-200 rounded-lg overflow-hidden cursor-grab active:cursor-grab"
             swipeRequirementType="position"
             swipeThreshold={100}
             preventSwipe={["up", "down"]}>
-            <div className="card">
+            <div className="flex flex-col h-full">
                 <img
                     src={photoUrl}
                     draggable="false"
@@ -27,7 +27,7 @@ const UserCard = ({ user }) => {
                         <p className="text-sm sm:text-base text-gray-600 sm:mt-1 mb-2">{`${age}, ${gender}`}</p>
                         <p className="text-gray-300 text-sm sm:text-base">{truncateString(about, 50) || "No description available"}</p>
                     </div>
-                    <div className="card-actions flex justify-between space-x-2 mt-4">
+                    <div className="card-actions hidden sm:flex justify-between space-x-2 mt-4">
                         <button
                             onClick={() => handleSendRequest("ignored")}
                             className="btn btn-error btn-sm sm:btn-md flex-1">
