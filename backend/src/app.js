@@ -32,7 +32,7 @@ app.use("/api/health", healthRouter);
 app.use("/api/message", messageRouter);
 
 app.use(errorMiddleware);
-app.use("*", notfoundMiddleware);
+app.use(notfoundMiddleware);
 
 const server = http.createServer(app);
 initializeSocket(server);
