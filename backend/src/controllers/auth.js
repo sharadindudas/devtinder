@@ -64,10 +64,10 @@ const Login = AsyncHandler(async (req, res, next) => {
 
     // Set the cookie and return the response
     res.cookie("devtinderToken", token, {
-        httpOnly: true, // Prevents JavaScript access to the cookie
-        secure: true, // Only sent over HTTPS
-        sameSite: "none", // Allows cross-site cookies
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 7 * 24 * 60 * 60 * 1000
     })
         .status(200)
         .json({
