@@ -1,5 +1,5 @@
-import { ConnectionRequestModel } from "../models/connectionRequest.js";
-import { UserModel } from "../models/user.js";
+import { ConnectionRequestModel } from "../models/connectionRequest.model.js";
+import { UserModel } from "../models/user.model.js";
 import { AsyncHandler, ErrorHandler } from "../utils/handlers.js";
 import { validateReviewConnectionRequest, validateSendConnectionRequest } from "../utils/validations.js";
 

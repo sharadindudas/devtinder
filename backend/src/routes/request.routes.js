@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { userAuth } from "../middlewares/auth.js";
-import { sendConnectionRequest, reviewConnectionRequest } from "../controllers/request.js";
+import { userAuth } from "../middlewares/auth.middleware.js";
+import { sendConnectionRequest, reviewConnectionRequest } from "../controllers/request.controller.js";
 
 const requestRouter = Router();
 requestRouter.post("/send/:status/:userId", userAuth, sendConnectionRequest);

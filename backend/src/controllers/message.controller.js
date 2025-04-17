@@ -1,4 +1,4 @@
-import { ChatModel } from "../models/chat.js";
+import { ChatModel } from "../models/chat.model.js";
 import { AsyncHandler } from "../utils/handlers.js";
 
 // Get messages
