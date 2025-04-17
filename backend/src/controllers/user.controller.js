@@ -1,5 +1,5 @@
-import { ConnectionRequestModel } from "../models/connectionRequest.js";
-import { UserModel } from "../models/user.js";
+import { ConnectionRequestModel } from "../models/connectionRequest.model.js";
+import { UserModel } from "../models/user.model.js";
 import { AsyncHandler } from "../utils/handlers.js";
 
 const USER_SAFE_DATA = "name gender age photoUrl about skills";

@@ -1,10 +1,10 @@
 import { Server } from "socket.io";
 import { FRONTEND_URL } from "../config/config.js";
-import { ConnectionRequestModel } from "../models/connectionRequest.js";
+import { ConnectionRequestModel } from "../models/connectionRequest.model.js";
 import crypto from "crypto";
 import { ErrorHandler } from "./handlers.js";
-import { ChatModel } from "../models/chat.js";
-import { MessageModel } from "../models/message.js";
+import { ChatModel } from "../models/chat.model.js";
+import { MessageModel } from "../models/message.model.js";
 
 const getRoomId = (senderId, receiverId) => {
     return crypto.createHash("sha256").update([senderId, receiverId].sort().join("$")).digest("hex").slice(0, 10);
@@ -15,7 +15,7 @@ const initializeSocket = (server) => {
         cors: {
             origin: FRONTEND_URL,
             credentials: true,
-            methods: ["GET", "POST", "PATCH", "PUT"]
+            methods: ["GET", "POST", "PATCH", "PUT", "OPTIONS"]
         }
     });
 

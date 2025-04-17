@@ -1,4 +1,4 @@
-import { UserModel } from "../models/user.js";
+import { UserModel } from "../models/user.model.js";
 import { AsyncHandler, ErrorHandler } from "../utils/handlers.js";
 import { validateLogin, validateSignup } from "../utils/validations.js";
 
