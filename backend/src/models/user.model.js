@@ -89,7 +89,7 @@ userSchema.methods.validatePassword = async function (password) {
 
 // Generate jwt
 userSchema.methods.generateJwt = function () {
-    const token = jwt.sign(
+    return jwt.sign(
         {
             _id: this._id
         },
@@ -99,7 +99,6 @@ userSchema.methods.generateJwt = function () {
             expiresIn: "7d"
         }
     );
-    return token;
 };
 
 export const UserModel = mongoose.model("User", userSchema);

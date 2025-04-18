@@ -3,8 +3,10 @@ import { Routes, Route } from "react-router";
 import Loader from "./components/Common/Loader";
 import PublicRoute from "./components/Routes/PublicRoute";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
+import Header from "./components/Common/Header";
+import Footer from "./components/Common/Footer";
+import { Toaster } from "react-hot-toast";
 
-const Body = lazy(() => import("./components/Common/Body"));
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
@@ -17,11 +19,10 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 const App = () => {
     return (
-        <Suspense fallback={<Loader />}>
-            <Routes>
-                <Route
-                    path="/"
-                    element={<Body />}>
+        <>
+            <Header />
+            <Suspense fallback={<Loader />}>
+                <Routes>
                     <Route
                         path="/"
                         element={
@@ -90,9 +91,11 @@ const App = () => {
                         path="*"
                         element={<NotFound />}
                     />
-                </Route>
-            </Routes>
-        </Suspense>
+                </Routes>
+            </Suspense>
+            <Footer />
+            <Toaster />
+        </>
     );
 };
 
