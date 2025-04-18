@@ -3,7 +3,7 @@ import { AsyncHandler, ErrorHandler } from "../utils/handlers.js";
 import { validateLogin, validateSignup } from "../utils/validations.js";
 
 // Signup
-const Signup = AsyncHandler(async (req, res, next) => {
+const signup = AsyncHandler(async (req, res, next) => {
     // Get data from request body
     const { name, email, password, gender, age } = req.body;
 
@@ -37,7 +37,7 @@ const Signup = AsyncHandler(async (req, res, next) => {
 });
 
 // Login
-const Login = AsyncHandler(async (req, res, next) => {
+const login = AsyncHandler(async (req, res, next) => {
     // Get data from request body
     const { email, password } = req.body;
 
@@ -78,7 +78,7 @@ const Login = AsyncHandler(async (req, res, next) => {
 });
 
 // Logout
-const Logout = AsyncHandler(async (req, res, next) => {
+const logout = AsyncHandler(async (req, res, next) => {
     // Clear the cookie and return the response
     res.clearCookie("devtinderToken", {
         httpOnly: true,
@@ -92,4 +92,4 @@ const Logout = AsyncHandler(async (req, res, next) => {
         });
 });
 
-export { Signup, Login, Logout };
+export { signup, login, logout };
