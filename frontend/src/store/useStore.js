@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
 export const useGlobalStore = create(
     devtools(
@@ -14,7 +14,10 @@ export const useGlobalStore = create(
 
                 // Actions
                 addUser: (userData) => set({ user: userData }),
-                clearUser: () => set({ user: null }),
+                clearUser: () => {
+                    set({ user: null });
+                    localStorage.removeItem("devtinder_userInfo");
+                },
 
                 addFeed: (feedData) => set({ feed: feedData }),
                 updateFeed: (userId) => set((state) => ({ feed: state.feed.filter((u) => String(u._id) !== String(userId)) })),
@@ -33,6 +36,7 @@ export const useGlobalStore = create(
             }),
             {
                 name: "devtinder_userInfo",
+                storage: createJSONStorage(() => localStorage),
                 partialize: (state) => ({ user: state.user })
             }
         )
