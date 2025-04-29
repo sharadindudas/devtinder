@@ -9,25 +9,26 @@ const UserCard = ({ user }) => {
     return (
         <TinderCard
             onSwipe={handleSwipe}
-            className="card max-w-sm border border-gray-200 rounded-lg overflow-hidden cursor-grab active:cursor-grab"
+            className="absolute shadow-none"
             swipeRequirementType="position"
             swipeThreshold={100}
             preventSwipe={["up", "down"]}>
-            <div className="flex flex-col h-full">
+            <div
+                className="card bg-white w-full sm:w-96 h-[30rem] sm:h-[35rem] select-none rounded-lg overflow-hidden border
+					 border-gray-200">
                 <img
+                    draggable={false}
                     src={photoUrl}
-                    draggable="false"
-                    loading="lazy"
-                    className="h-[60%] w-full object-cover"
-                    alt="user"
+                    alt={name}
+                    className="object-cover h-[67%] pointer-events-none"
                 />
-                <div className="p-4 bg-base-200 flex flex-col justify-between h-[40%]">
-                    <div>
+                <div className="card-body bg-base-200 p-4">
+                    <div className="mb-3">
                         <h2 className="text-lg sm:text-xl font-semibold">{name}</h2>
                         <p className="text-sm sm:text-base text-gray-600 sm:mt-1 mb-2">{`${age}, ${gender}`}</p>
                         <p className="text-gray-300 text-sm sm:text-base">{truncateString(about, 50) || "No description available"}</p>
                     </div>
-                    <div className="card-actions hidden sm:flex justify-between space-x-2 mt-4">
+                    <div className="card-actions flex justify-between space-x-2">
                         <button
                             onClick={() => handleSendRequest("ignored")}
                             className="btn btn-error btn-sm sm:btn-md flex-1">
