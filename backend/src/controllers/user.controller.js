@@ -63,6 +63,12 @@ const userFeed = AsyncHandler(async (req, res, next) => {
     // Get logged in user's data
     const loggedInUser = req.user;
 
+    // Get pagination data
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit > 50 ? 50 : limit;
+    const skip = (page - 1) * limit;
+
     // Get all the connections made by the user
     const allConnections = await ConnectionRequestModel.find({
         $or: [{ senderId: loggedInUser._id }, { receiverId: loggedInUser._id }]
@@ -75,16 +81,33 @@ const userFeed = AsyncHandler(async (req, res, next) => {
         usersToHideFromFeed.add(connection.receiverId._id.toString());
     });
 
+    // Add the logged in user to hide from the feed
+    usersToHideFromFeed.add(loggedInUser._id.toString());
+
     // Get all the users except for the ones to hide from feed
     const usersToBeShownOnFeed = await UserModel.find({
-        $and: [{ _id: { $nin: Array.from(usersToHideFromFeed) } }, { _id: { $ne: loggedInUser._id } }]
-    }).select(USER_SAFE_DATA);
+        _id: { $nin: Array.from(usersToHideFromFeed) }
+    })
+        .select(USER_SAFE_DATA)
+        .skip(skip)
+        .limit(limit);
+
+    // Find the total users count for pagination info
+    const totalUsers = await UserModel.countDocuments({
+        _id: { $nin: Array.from(usersToHideFromFeed) }
+    });
 
     // Return the response
     res.status(200).json({
         success: true,
         message: "Fetched all connections successfully",
-        data: usersToBeShownOnFeed
+        data: usersToBeShownOnFeed,
+        pagination: {
+            currentPage: page,
+            totalPages: Math.ceil(totalUsers / limit),
+            totalUsers,
+            hasMore: page * limit < totalUsers
+        }
     });
 });
 

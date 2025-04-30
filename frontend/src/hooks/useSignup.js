@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { axiosInstance } from "../utils/axiosInstance";
 import toast from "react-hot-toast";

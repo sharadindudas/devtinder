@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { axiosInstance } from "../utils/axiosInstance";
 import { AxiosError } from "axios";
 import { useGlobalStore } from "../store/useStore";
