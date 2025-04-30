@@ -1,16 +1,43 @@
 import { useEffect, useState } from "react";
-import { useGlobalStore } from "../store/useStore";
-import { axiosInstance } from "../utils/axiosInstance";
-import { AxiosError } from "axios";
-import { truncateString } from "../utils/truncateString";
 import toast from "react-hot-toast";
 import TinderCard from "react-tinder-card";
-import useGetFeed from "../hooks/useGetFeed";
+import { AxiosError } from "axios";
+import { useGlobalStore } from "../store/useStore";
+import { axiosInstance } from "../utils/axiosInstance";
+import { truncateString } from "../utils/truncateString";
 
 const Feed = () => {
-    const { feed, updateFeed } = useGlobalStore();
+    const { feed, addFeed, updateFeed } = useGlobalStore();
     const [page, setPage] = useState(1);
-    const { isLoading, paginationInfo, fetchFeed } = useGetFeed();
+    const [isLoading, setIsLoading] = useState(false);
+    const [paginationInfo, setPaginationInfo] = useState({
+        currentPage: 1,
+        totalPages: 1,
+        totalUsers: 0,
+        hasMore: false
+    });
+
+    const fetchFeed = async (currentPage) => {
+        setIsLoading(true);
+        try {
+            const response = await axiosInstance.get("/user/feed", {
+                params: {
+                    page: currentPage,
+                    limit: 10
+                }
+            });
+            if (response.data.success) {
+                addFeed(response.data.data);
+                setPaginationInfo(response.data.pagination);
+            }
+        } catch (err) {
+            if (err instanceof AxiosError) {
+                console.error(err.response.data.message);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
         fetchFeed(1);
@@ -61,7 +88,6 @@ const Feed = () => {
                 <div className="relative w-full max-w-80 sm:max-w-sm h-[30rem] sm:h-[35rem] my-10">
                     {feed?.map((user) => {
                         const { _id, name, about, age, gender, photoUrl } = user;
-
                         return (
                             <TinderCard
                                 onSwipe={(direction) => handleSwipe(direction, _id)}
