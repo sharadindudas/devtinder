@@ -28,4 +28,4 @@ const connectionRequestSchema = new mongoose.Schema(
 // Compound indexing
 connectionRequestSchema.index({ senderId: 1, receiverId: 1 });
 
-export const ConnectionRequestModel = mongoose.model("Connection Request", connectionRequestSchema);
+export const ConnectionRequestModel = mongoose.model("ConnectionRequest", connectionRequestSchema);
