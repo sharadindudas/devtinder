@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { FRONTEND_URL } from "../config/config.js";
-import { ConnectionRequestModel } from "../models/connectionRequest.model.js";
+import { ConnectionRequestModel } from "../models/request.model.js";
 import crypto from "crypto";
 import { ErrorHandler } from "./handlers.js";
 import { ChatModel } from "../models/chat.model.js";
