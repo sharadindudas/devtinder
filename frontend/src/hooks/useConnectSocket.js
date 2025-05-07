@@ -1,46 +1,48 @@
 import { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
+import { io } from "socket.io-client";
 import { useGlobalStore } from "../store/useStore";
 import notificationSound from "../assets/sounds/notification.mp3";
 
 const useConnectSocket = (userId) => {
     const { user, updateMessages } = useGlobalStore();
-    const [socket, setSocket] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const socketRef = useRef(null);
     const navigate = useNavigate();
-
     const recentlyPlayed = useRef(false);
 
+    // Create a socket connection
     useEffect(() => {
-        if (socket) return;
-
-        const newSocket = io(import.meta.env.VITE_BACKEND_URL, {
-            withCredentials: true
-        });
-        setSocket(newSocket);
-
+        if (!socketRef.current) {
+            socketRef.current = io(import.meta.env.VITE_BACKEND_URL, { withCredentials: true });
+        }
         return () => {
-            newSocket.close();
-            setSocket(null);
+            socketRef.current.disconnect();
+            socketRef.current = null;
         };
     }, []);
 
+    // Join the room and receive messages
     useEffect(() => {
-        if (!socket || !user?._id || !userId) return;
+        if (!user._id || !userId) return;
 
-        socket.emit("joinChat", { name: user?.name, senderId: user?._id, receiverId: userId });
+        socketRef.current.emit("joinChat", {
+            name: user.name,
+            senderId: user._id,
+            receiverId: userId
+        });
 
-        socket.on("error", (errMessage) => {
+        socketRef.current.on("error", (errMessage) => {
             toast.error(errMessage);
             setIsLoading(true);
             setTimeout(() => navigate("/feed", { replace: true }), 1000);
         });
 
-        socket.on("messageReceived", (newMessage) => {
+        socketRef.current.on("messageReceived", (newMessage) => {
             updateMessages(newMessage);
-            if (!recentlyPlayed.current && newMessage?.senderId?._id !== user?._id) {
+
+            if (!recentlyPlayed.current && newMessage.senderId._id !== user._id) {
                 const sound = new Audio(notificationSound);
                 sound.play();
                 recentlyPlayed.current = true;
@@ -51,12 +53,18 @@ const useConnectSocket = (userId) => {
         });
 
         return () => {
-            socket.off("error");
-            socket.off("messageReceived");
+            socketRef.current.off("error");
+            socketRef.current.off("messageReceived");
         };
-    }, [socket, user?._id, user?.name, userId, navigate, updateMessages]);
+    }, [user, userId, navigate, updateMessages]);
 
-    return { socket, isLoading };
+    const sendMessage = (messageData) => {
+        if (socketRef.current) {
+            socketRef.current.emit("sendMessage", messageData);
+        }
+    };
+
+    return { isLoading, sendMessage };
 };
 
 export default useConnectSocket;

@@ -1,19 +1,20 @@
 import { useParams } from "react-router";
 import { useForm } from "react-hook-form";
+import { LuSend } from "react-icons/lu";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { chatSchema } from "../schemas/chatSchema";
 import { useGlobalStore } from "../store/useStore";
-import useGetMessages from "../hooks/useGetMessages";
-import useConnectSocket from "../hooks/useConnectSocket";
+import { chatSchema } from "../schemas/chatSchema";
 import Messages from "../components/Chat/Messages";
 import Loader from "../components/Common/Loader";
-import { LuSend } from "react-icons/lu";
+import useConnectSocket from "../hooks/useConnectSocket";
+import useGetAllMessages from "../hooks/useGetAllMessages";
 
 const Chat = () => {
     const { user } = useGlobalStore();
     const { userId } = useParams();
-    useGetMessages(userId);
-    const { socket, isLoading } = useConnectSocket(userId);
+
+    useGetAllMessages(userId);
+    const { isLoading, sendMessage } = useConnectSocket(userId);
 
     const {
         register,
@@ -26,7 +27,11 @@ const Chat = () => {
     });
 
     const onSubmit = ({ message }) => {
-        socket?.emit("sendMessage", { senderId: user?._id, receiverId: userId, message });
+        sendMessage({
+            message,
+            senderId: user._id,
+            receiverId: userId
+        });
         reset();
     };
 

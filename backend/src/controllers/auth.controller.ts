@@ -1,14 +1,16 @@
-import { UserModel } from "../models/user.model.js";
-import { AsyncHandler, ErrorHandler } from "../utils/handlers.js";
-import { validateLogin, validateSignup } from "../utils/validations.js";
+import { RequestHandler, Response } from "express";
+import { AsyncHandler, ErrorHandler } from "../utils/handlers";
+import { ApiResponse } from "../@types/types";
+import { LoginSchema, LoginSchemaType, SignupSchema, SignupSchemaType } from "../schemas/auth.schema";
+import { UserModel } from "../models/user.model";
 
 // Signup
-const signup = AsyncHandler(async (req, res, next) => {
-    // Get data from request body
-    const { name, email, password, gender, age } = req.body;
-
+const signup = AsyncHandler(async (req, res: Response<ApiResponse>) => {
     // Validation of data
-    validateSignup(req.body);
+    const { name, email, password, age, gender } = await SignupSchema.validate(req.body as SignupSchemaType, {
+        abortEarly: false,
+        stripUnknown: true
+    });
 
     // Check if the user already exists in the db or not
     const userExists = await UserModel.findOne({ email });
@@ -21,12 +23,12 @@ const signup = AsyncHandler(async (req, res, next) => {
         name,
         email,
         password,
-        gender,
-        age
+        age,
+        gender
     });
 
     // Remove sensitive data
-    newUser.password = undefined;
+    newUser.password = undefined!;
 
     // Return the response
     res.status(201).json({
@@ -37,12 +39,9 @@ const signup = AsyncHandler(async (req, res, next) => {
 });
 
 // Login
-const login = AsyncHandler(async (req, res, next) => {
-    // Get data from request body
-    const { email, password } = req.body;
-
+const login = AsyncHandler(async (req, res: Response<ApiResponse>) => {
     // Validation of data
-    validateLogin(req.body);
+    const { email, password } = await LoginSchema.validate(req.body as LoginSchemaType, { abortEarly: false, stripUnknown: true });
 
     // Check if the user exists in the db or not
     const userExists = await UserModel.findOne({ email });
@@ -50,17 +49,17 @@ const login = AsyncHandler(async (req, res, next) => {
         throw new ErrorHandler("User does not exists", 404);
     }
 
-    // Validate the password
+    // Validation of password
     const isValidPassword = await userExists.validatePassword(password);
     if (!isValidPassword) {
         throw new ErrorHandler("Invalid Credentials", 401);
     }
 
     // Generate jwt
-    const token = userExists.generateJwt();
+    const token = userExists.generateJWT();
 
     // Remove sensitive data
-    userExists.password = undefined;
+    userExists.password = undefined!;
 
     // Set the cookie and return the response
     res.cookie("devtinderToken", token, {
@@ -78,8 +77,8 @@ const login = AsyncHandler(async (req, res, next) => {
 });
 
 // Logout
-const logout = AsyncHandler(async (req, res, next) => {
-    // Clear the cookie and return the response
+const logout: RequestHandler = (_req, res: Response<ApiResponse>) => {
+    // Remove the cookie and return the response
     res.clearCookie("devtinderToken", {
         httpOnly: true,
         secure: true,
@@ -90,6 +89,6 @@ const logout = AsyncHandler(async (req, res, next) => {
             success: true,
             message: "Logged out successfully"
         });
-});
+};
 
 export { signup, login, logout };

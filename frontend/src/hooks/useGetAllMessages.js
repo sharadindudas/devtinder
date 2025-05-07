@@ -3,13 +3,14 @@ import { axiosInstance } from "../utils/axiosInstance";
 import { AxiosError } from "axios";
 import { useGlobalStore } from "../store/useStore";
 
-const useGetMessages = (receiverId) => {
+const useGetAllMessages = (userId) => {
     const { addMessages } = useGlobalStore();
 
+    // Get all messages
     useEffect(() => {
-        const fetchMessages = async () => {
+        const fetchAllMessages = async () => {
             try {
-                const response = await axiosInstance.get(`/message/get/${receiverId}`);
+                const response = await axiosInstance.get(`/chat/${userId}`);
                 if (response.data.success) {
                     addMessages(response.data.data);
                 }
@@ -19,8 +20,8 @@ const useGetMessages = (receiverId) => {
                 }
             }
         };
-        fetchMessages();
-    }, [addMessages, receiverId]);
+        fetchAllMessages();
+    }, [addMessages, userId]);
 };
 
-export default useGetMessages;
+export default useGetAllMessages;

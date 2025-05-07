@@ -1,10 +1,10 @@
-import { ChatModel } from "../models/chat.model.js";
-import { AsyncHandler } from "../utils/handlers.js";
+import { ChatModel } from "../models/chat.model";
+import { AsyncHandler } from "../utils/handlers";
 
-// Get messages
-const getMessages = AsyncHandler(async (req, res, next) => {
+// Get all the chat messages
+const getAllMessages = AsyncHandler(async (req, res) => {
     // Get data from request params
-    const { userId: receiverId } = req.params;
+    const receiverId = req.params.userId;
 
     // Get logged in user's id
     const senderId = req.user._id;
@@ -14,17 +14,15 @@ const getMessages = AsyncHandler(async (req, res, next) => {
         participants: { $all: [senderId, receiverId] }
     }).populate({
         path: "messages",
-        populate: [
-            { path: "senderId", select: "name photoUrl" },
-            { path: "receiverId", select: "name photoUrl" }
-        ]
+        populate: { path: "senderId", select: "name photoUrl" }
     });
     if (!chatExists) {
-        return res.status(200).json({
+        res.status(200).json({
             success: true,
             message: "Fetched all messages successfully",
             data: []
         });
+        return;
     }
 
     // Send the messages data
@@ -38,4 +36,4 @@ const getMessages = AsyncHandler(async (req, res, next) => {
     });
 });
 
-export { getMessages };
+export { getAllMessages };

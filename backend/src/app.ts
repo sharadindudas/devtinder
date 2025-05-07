@@ -1,23 +1,23 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import cors from "cors";
-import helmet from "helmet";
 import compression from "compression";
+import helmet from "helmet";
+import cors from "cors";
 import rateLimit from "express-rate-limit";
+import { FRONTEND_URL } from "./config/config";
 import http from "http";
-import { initializeSocket } from "./utils/socket.js";
-import { FRONTEND_URL } from "./config/config.js";
 
 // Middleware imports
-import { errorMiddleware } from "./middlewares/error.middleware.js";
-import { notfoundMiddleware } from "./middlewares/notfound.middleware.js";
+import { errorMiddleware } from "./middlewares/error.middleware";
+import { notfoundMiddleware } from "./middlewares/notfound.middleware";
 
 // Route imports
-import authRouter from "./routes/auth.routes.js";
-import profileRouter from "./routes/profile.routes.js";
-import requestRouter from "./routes/request.routes.js";
-import userRouter from "./routes/user.routes.js";
-import messageRouter from "./routes/message.routes.js";
+import authRouter from "./routes/auth.routes";
+import profileRouter from "./routes/profile.routes";
+import userRouter from "./routes/user.routes";
+import requestRouter from "./routes/request.routes";
+import { initializeSocket } from "./utils/socket";
+import chatRouter from "./routes/chat.routes";
 
 // Express initialization
 const app = express();
@@ -52,16 +52,18 @@ app.get("/api/v1/health", (_req, res) => {
 });
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/profile", profileRouter);
-app.use("/api/v1/request", requestRouter);
 app.use("/api/v1/user", userRouter);
-app.use("/api/v1/message", messageRouter);
+app.use("/api/v1/request", requestRouter);
+app.use("/api/v1/chat", chatRouter);
 
-// Error middlewares
+// Error handling middleware
 app.use(errorMiddleware);
 app.use(notfoundMiddleware);
 
 // Creating http server
 const server = http.createServer(app);
+
+// Connection to web socket
 initializeSocket(server);
 
 export { app, server };

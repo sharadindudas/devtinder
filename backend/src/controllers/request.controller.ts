@@ -1,20 +1,27 @@
-import { ConnectionRequestModel } from "../models/request.model.js";
-import { UserModel } from "../models/user.model.js";
-import { AsyncHandler, ErrorHandler } from "../utils/handlers.js";
-import { validateReviewConnectionRequest, validateSendConnectionRequest } from "../utils/validations.js";
+import { Response } from "express";
+import { AsyncHandler, ErrorHandler } from "../utils/handlers";
+import { ApiResponse } from "../@types/types";
+import { ConnectionRequestModel } from "../models/request.model";
+import { UserModel } from "../models/user.model";
+import {
+    ReviewConnectionRequestSchema,
+    ReviewConnectionRequestSchemaType,
+    SendConnectionRequestSchema,
+    SendConnectionRequestSchemaType
+} from "../schemas/request.schema";
 
 // Send connection request
-const sendConnectionRequest = AsyncHandler(async (req, res, next) => {
-    // Get data from request params
-    const { status, userId: receiverId } = req.params;
-
+const sendConnectionRequest = AsyncHandler(async (req, res: Response<ApiResponse>) => {
     // Get logged in user's id
     const senderId = req.user._id;
 
     // Validation of data
-    validateSendConnectionRequest(req.params);
+    const { status, userId: receiverId } = await SendConnectionRequestSchema.validate(req.params as SendConnectionRequestSchemaType, {
+        abortEarly: false,
+        stripUnknown: true
+    });
 
-    // Check if the receiver exists in the db or not
+    // Check if the receiver user exists in the db or not
     const receiverExists = await UserModel.findById(receiverId);
     if (!receiverExists) {
         throw new ErrorHandler("User does not exists", 404);
@@ -43,7 +50,7 @@ const sendConnectionRequest = AsyncHandler(async (req, res, next) => {
         status
     });
 
-    // Populate the new connection request
+    // Populate the connection request data
     const connectionRequestData = await newConnectionRequest.populate([
         { path: "senderId", select: "name" },
         { path: "receiverId", select: "name" }
@@ -58,31 +65,31 @@ const sendConnectionRequest = AsyncHandler(async (req, res, next) => {
 });
 
 // Review connection request
-const reviewConnectionRequest = AsyncHandler(async (req, res, next) => {
-    // Get data from request params
-    const { status, requestId } = req.params;
-
+const reviewConnectionRequest = AsyncHandler(async (req, res: Response<ApiResponse>) => {
     // Get logged in user's id
     const receiverId = req.user._id;
 
     // Validation of data
-    validateReviewConnectionRequest(req.params);
+    const { status, requestId } = await ReviewConnectionRequestSchema.validate(req.params as ReviewConnectionRequestSchemaType, {
+        abortEarly: false,
+        stripUnknown: true
+    });
 
     // Check if the connection request exists in the db or not
     const connectionRequestExists = await ConnectionRequestModel.findOne({
         _id: requestId,
-        status: "interested",
-        receiverId
+        receiverId,
+        status: "interested"
     });
     if (!connectionRequestExists) {
         throw new ErrorHandler("Connection request does not exists", 404);
     }
 
-    // Update the connection request status
+    // Update and save connection request status
     connectionRequestExists.status = status;
     await connectionRequestExists.save({ validateBeforeSave: false });
 
-    // Populate the connection request
+    // Populate the connection request data
     const connectionRequestData = await connectionRequestExists.populate([
         { path: "senderId", select: "name" },
         { path: "receiverId", select: "name" }
