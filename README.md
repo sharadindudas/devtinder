@@ -17,8 +17,8 @@ DevTinder is a **developer networking platform** where tech enthusiasts can **co
 
 ## 🛠 Tech Stack
 
-**Frontend:** React.js, JavaScript, Zustand, Tailwind CSS, DaisyUi  
-**Backend:** Node.js, Express.js, MongoDB  
+**Frontend:** React.js, TypeScript, Zustand, Tailwind CSS, DaisyUi  
+**Backend:** Node.js, Express.js, MongoDB, TypeScript
 **Real-time:** Socket.io  
 **Authentication:** JWT & Cookies
 
@@ -26,8 +26,8 @@ DevTinder is a **developer networking platform** where tech enthusiasts can **co
 
 ```bash
 devtinder/
-│── frontend/    # Frontend (React, JavaScript, Zustand, Tailwind CSS, DaisyUi)
-│── backend/     # Backend (Node.js, Express, MongoDB, Socket.io)
+│── frontend/    # Frontend (React, TypeScript, Zustand, Tailwind CSS, DaisyUi)
+│── backend/     # Backend (Node.js, Express, MongoDB, TypeScript, Socket.io)
 │── README.md    # Documentation
 ```
 
@@ -72,7 +72,7 @@ Contributions are welcome! Feel free to fork the repository and submit pull requ
 🚧 **Online/Offline Status** – Show when a user is online or last seen.  
 💬 **Typing Indicator** – Show when the other user is typing (WhatsApp-style).  
 📎 **File Attachments in Chat** – Send and receive images, PDFs, or code snippets.  
-🎨 **UI/UX Improvements** – Make the interface sleeker and more interactive.   
+🎨 **UI/UX Improvements** – Make the interface sleeker and more interactive.  
 🎯 **Daily Match Suggestions** – Algorithmic suggestions based on mutual interests or languages.  
 📊 **Activity Stats** – Track profile views, swipe counts, and connection stats.  
 🛡️ **Reporting & Blocking** – Allow users to report/block inappropriate behavior.  
