@@ -18,8 +18,7 @@ DevTinder is a **developer networking platform** where tech enthusiasts can **co
 ## 🛠 Tech Stack
 
 **Frontend:** React.js, TypeScript, Zustand, Tailwind CSS, DaisyUi  
-**Backend:** Node.js, Express.js, MongoDB, TypeScript
-**Real-time:** Socket.io  
+**Backend:** Node.js, Express.js, MongoDB, TypeScript, Socket.io  
 **Authentication:** JWT & Cookies
 
 ## 📂 Project Structure
