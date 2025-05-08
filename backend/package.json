@@ -13,7 +13,7 @@
         "nodejs",
         "express",
         "mongodb",
-        "javascript"
+        "typescript"
     ],
     "author": "Sharadindu Das",
     "license": "ISC",
