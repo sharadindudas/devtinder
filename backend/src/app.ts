@@ -4,16 +4,20 @@ import compression from "compression";
 import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import { FRONTEND_URL } from "./config/config";
 import http from "http";
+
 import { errorMiddleware } from "./middlewares/error.middleware";
 import { notfoundMiddleware } from "./middlewares/notfound.middleware";
+import { morganMiddleware } from "./middlewares/morgan.middleware";
+
 import authRouter from "./routes/auth.routes";
 import profileRouter from "./routes/profile.routes";
 import userRouter from "./routes/user.routes";
 import requestRouter from "./routes/request.routes";
-import { initializeSocket } from "./utils/socket";
 import chatRouter from "./routes/chat.routes";
+
+import { FRONTEND_URL } from "./config/config";
+import { initializeSocket } from "./utils/socket";
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
@@ -35,6 +39,7 @@ app.use(
         message: "Too many requests from this IP, please try again later"
     })
 );
+app.use(morganMiddleware);
 
 app.get("/api/v1/health", (_req, res) => {
     res.status(200).json({

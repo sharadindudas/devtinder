@@ -1,17 +1,16 @@
 import { server } from "./app";
 import { PORT } from "./config/config";
 import { connectMongoDB } from "./utils/mongodb";
+import { logger } from "./utils/logger";
+import * as path from "path";
 
-// Connection to mongodb
-connectMongoDB()
-    .then(() => {
-        // Connection to server
-        server.listen(PORT, () => {
-            console.log(`Server running on PORT ${PORT}`);
-        });
-    })
-    .catch((err) => {
-        if (err instanceof Error) {
-            console.error(err.message);
-        }
+(async () => {
+    // Connection to mongodb
+    await connectMongoDB();
+    // Connection to server
+    server.listen(PORT, () => {
+        logger.info(`Server running on PORT ${PORT}`);
     });
+})();
+
+console.log(path.resolve(__dirname, "../logs"));

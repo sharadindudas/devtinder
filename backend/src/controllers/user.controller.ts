@@ -3,7 +3,7 @@ import { AsyncHandler } from "../utils/handlers";
 import { ApiResponse } from "../@types/types";
 import { ConnectionRequestModel } from "../models/request.model";
 import { UserModel } from "../models/user.model";
-import { PaginationSchema, PaginationSchemaType } from "../schemas/common.schema";
+import { PaginationSchema } from "../schemas/common.schema";
 
 const USER_SAFE_DATA = "name gender age photoUrl about skills";
 
@@ -62,12 +62,12 @@ const allConnections = AsyncHandler(async (req, res: Response<ApiResponse>) => {
 });
 
 // User Feed
-const userFeed = AsyncHandler(async (req: Request<{}, {}, {}, {}>, res: Response<ApiResponse>) => {
+const userFeed = AsyncHandler(async (req: Request, res: Response<ApiResponse>) => {
     // Get logged in user's data
     const loggedInUser = req.user;
 
     // Get Pagination data
-    const { page, limit } = await PaginationSchema.validate(req.query as PaginationSchemaType, { abortEarly: false, stripUnknown: true });
+    const { page, limit } = await PaginationSchema.validate(req.query, { abortEarly: false, stripUnknown: true });
     const skip = (page - 1) * limit;
 
     // Get all the users connected to logged in user

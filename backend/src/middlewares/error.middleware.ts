@@ -1,10 +1,12 @@
 import { ErrorRequestHandler } from "express";
 import { ErrorHandler } from "../utils/handlers";
 import { ValidationError } from "yup";
+import { logger } from "../utils/logger";
 
-export const errorMiddleware: ErrorRequestHandler = (err: ErrorHandler, _req, res, _next) => {
+export const errorMiddleware: ErrorRequestHandler = (err: ErrorHandler, _req, res, next) => {
     // Log all errors
     console.error(err);
+    logger.error(err.message);
 
     // Set default error values
     err.message ||= "Internal Server Error Occurred";
@@ -12,7 +14,7 @@ export const errorMiddleware: ErrorRequestHandler = (err: ErrorHandler, _req, re
 
     // Yup validation error
     if (err instanceof ValidationError) {
-        let message: string[] | string = [];
+        const message: string[] | string = [];
         if (err.errors.length > 1) {
             err.errors.forEach((e: string) => {
                 message.push(e);

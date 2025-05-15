@@ -6,6 +6,7 @@ import { ConnectionRequestModel } from "../models/request.model";
 import { ErrorHandler } from "./handlers";
 import { ChatModel } from "../models/chat.model";
 import { MessageModel } from "../models/message.model";
+import { logger } from "./logger";
 
 // Create unique room id
 const getRoomId = (senderId: string, receiverId: string) => {
@@ -22,7 +23,7 @@ export const initializeSocket = (server: http.Server<typeof http.IncomingMessage
     });
 
     io.on("connection", (socket) => {
-        console.log("User connected", socket.id);
+        logger.info("User connected", socket.id);
 
         socket.on("joinChat", async ({ name, senderId, receiverId }) => {
             try {
@@ -90,7 +91,7 @@ export const initializeSocket = (server: http.Server<typeof http.IncomingMessage
         });
 
         socket.on("disconnect", () => {
-            console.log("User disconnected", socket.id);
+            logger.info("User disconnected", socket.id);
         });
     });
 };

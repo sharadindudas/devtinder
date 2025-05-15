@@ -1,13 +1,14 @@
 import mongoose from "mongoose";
 import { MONGODB_URL } from "../config/config";
+import { logger } from "./logger";
 
 export const connectMongoDB = async () => {
     try {
         await mongoose.connect(MONGODB_URL, { dbName: "devtinder" });
-        console.log("MongoDB is connected successfully");
+        logger.info("MongoDB is connected successfully");
     } catch (err) {
         if (err instanceof Error) {
-            console.error("Error while connecting to mongodb:", err.message);
+            logger.error("Error while connecting to mongodb:", err.message);
         }
         process.exit(1);
     }
