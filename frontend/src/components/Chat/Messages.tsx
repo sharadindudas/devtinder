@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
+
 import { useGlobalStore } from "../../store/useStore";
+
 import ChatMessage from "./ChatMessage";
 
 const Messages = () => {

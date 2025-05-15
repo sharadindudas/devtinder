@@ -13,7 +13,7 @@ const RequestCard = ({ request }: { request: Request }) => {
                 <img
                     src={photoUrl}
                     className="w-12 h-12 md:w-16 md:h-16 rounded-full"
-                    alt="photo"
+                    alt="request-img"
                     loading="lazy"
                 />
                 <div className="text-left space-y-1">

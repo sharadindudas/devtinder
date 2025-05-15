@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { AxiosError } from "axios";
+import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
 import { useGlobalStore } from "../store/useStore";
 import { axiosInstance } from "../utils/axiosInstance";
-import { AxiosError } from "axios";
-import toast from "react-hot-toast";
 
 const useGetFeed = () => {
     const { feed, addFeed, updateFeed } = useGlobalStore();
@@ -15,55 +16,64 @@ const useGetFeed = () => {
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const fetchFeed = async (currentPage: number) => {
-        setIsLoading(true);
-        try {
-            const response = await axiosInstance.get("/user/feed", {
-                params: {
-                    page: currentPage,
-                    limit: 10
+    const fetchFeed = useCallback(
+        async (currentPage: number) => {
+            setIsLoading(true);
+            try {
+                const response = await axiosInstance.get("/user/feed", {
+                    params: {
+                        page: currentPage,
+                        limit: 10
+                    }
+                });
+                if (response.data.success) {
+                    addFeed(response.data.data);
+                    setPaginationInfo(response.data.pagination);
                 }
-            });
-            if (response.data.success) {
-                addFeed(response.data.data);
-                setPaginationInfo(response.data.pagination);
+            } catch (err) {
+                if (err instanceof AxiosError) {
+                    console.error(err.response?.data.message);
+                }
+            } finally {
+                setIsLoading(false);
             }
-        } catch (err) {
-            if (err instanceof AxiosError) {
-                console.error(err.response?.data.message);
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        },
+        [addFeed]
+    );
 
     useEffect(() => {
         fetchFeed(1);
-    }, []);
+    }, [fetchFeed]);
 
-    const handleSwipe = (direction: string, userId: string) => {
-        handleSendRequest(direction === "left" ? "ignored" : "interested", userId);
-    };
+    const handleSendRequest = useCallback(
+        async (status: string, userId: string) => {
+            try {
+                const response = await axiosInstance.post(`/request/send/${status}/${userId}`);
+                if (response.data.success) {
+                    toast.success(response.data.message);
+                    updateFeed(userId);
 
-    const handleSendRequest = async (status: string, userId: string) => {
-        try {
-            const response = await axiosInstance.post(`/request/send/${status}/${userId}`);
-            if (response.data.success) {
-                toast.success(response.data.message);
-                updateFeed(userId);
-
-                if (feed.length <= 1 && paginationInfo.hasMore) {
-                    const nextPage = page + 1;
-                    setPage(nextPage);
-                    fetchFeed(nextPage);
+                    if (feed.length <= 1 && paginationInfo.hasMore) {
+                        const nextPage = page + 1;
+                        setPage(nextPage);
+                        fetchFeed(nextPage);
+                    }
+                }
+            } catch (err) {
+                if (err instanceof AxiosError) {
+                    toast.error(err.response?.data.message);
                 }
             }
-        } catch (err) {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
-        }
-    };
+        },
+        [feed.length, fetchFeed, page, paginationInfo.hasMore, updateFeed]
+    );
+
+    const handleSwipe = useCallback(
+        (direction: string, userId: string) => {
+            handleSendRequest(direction === "left" ? "ignored" : "interested", userId);
+        },
+        [handleSendRequest]
+    );
 
     return { isLoading, handleSwipe, handleSendRequest };
 };

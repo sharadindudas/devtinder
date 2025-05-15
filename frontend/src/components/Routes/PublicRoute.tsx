@@ -1,4 +1,5 @@
 import { Navigate } from "react-router";
+
 import { useGlobalStore } from "../../store/useStore";
 
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {

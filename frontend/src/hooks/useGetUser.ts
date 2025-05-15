@@ -1,7 +1,8 @@
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
-import { axiosInstance } from "../utils/axiosInstance";
+
 import { useGlobalStore } from "../store/useStore";
+import { axiosInstance } from "../utils/axiosInstance";
 
 const useGetUser = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);

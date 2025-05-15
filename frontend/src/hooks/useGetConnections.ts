@@ -1,7 +1,8 @@
-import { useEffect } from "react";
 import { AxiosError } from "axios";
-import { axiosInstance } from "../utils/axiosInstance";
+import { useEffect } from "react";
+
 import { useGlobalStore } from "../store/useStore";
+import { axiosInstance } from "../utils/axiosInstance";
 
 const useGetConnections = () => {
     const { addConnections } = useGlobalStore();

@@ -1,11 +1,12 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route } from "react-router";
-import Loader from "./components/Common/Loader";
-import PublicRoute from "./components/Routes/PublicRoute";
-import ProtectedRoute from "./components/Routes/ProtectedRoute";
-import Header from "./components/Common/Header";
-import Footer from "./components/Common/Footer";
 import { Toaster } from "react-hot-toast";
+import { Routes, Route } from "react-router";
+
+import Footer from "./components/Common/Footer";
+import Header from "./components/Common/Header";
+import Loader from "./components/Common/Loader";
+import ProtectedRoute from "./components/Routes/ProtectedRoute";
+import PublicRoute from "./components/Routes/PublicRoute";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));

@@ -1,7 +1,8 @@
 import TinderCard from "react-tinder-card";
-import { truncateString } from "../utils/truncateString";
-import { useGlobalStore } from "../store/useStore";
+
 import useGetFeed from "../hooks/useGetFeed";
+import { useGlobalStore } from "../store/useStore";
+import { truncateString } from "../utils/truncateString";
 
 const Feed = () => {
     const { feed } = useGlobalStore();

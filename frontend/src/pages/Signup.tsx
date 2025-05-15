@@ -1,12 +1,13 @@
-import { useState } from "react";
-import { Link } from "react-router";
-import { IoMdEye, IoMdEyeOff } from "react-icons/io";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { SignupSchema, type SignupSchemaType } from "../schemas/authSchema";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { Link } from "react-router";
+
 import ToolTipMessage from "../components/Common/ToolTipMessage";
 import useSignup from "../hooks/useSignup";
+import { SignupSchema, type SignupSchemaType } from "../schemas/authSchema";
 
 const Signup = () => {
     const {

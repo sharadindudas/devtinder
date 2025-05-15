@@ -1,4 +1,5 @@
 import * as yup from "yup";
+
 import { ageSchema, genderSchema } from "./commonSchema";
 
 // Edit profile schema

@@ -1,13 +1,14 @@
-import { useParams } from "react-router";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { LuSend } from "react-icons/lu";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useGlobalStore } from "../store/useStore";
+import { useParams } from "react-router";
+
 import Messages from "../components/Chat/Messages";
 import Loader from "../components/Common/Loader";
-import { ChatSchema, type ChatSchemaType } from "../schemas/chatSchema";
 import useConnectSocket from "../hooks/useConnectSocket";
 import useGetAllMessages from "../hooks/useGetAllMessages";
+import { ChatSchema, type ChatSchemaType } from "../schemas/chatSchema";
+import { useGlobalStore } from "../store/useStore";
 
 const Chat = () => {
     const {

@@ -1,6 +1,6 @@
+import Loader from "../components/Common/Loader";
 import EditProfile from "../components/Profile/EditProfile";
 import ProfileCard from "../components/Profile/ProfileCard";
-import Loader from "../components/Common/Loader";
 import { useGlobalStore } from "../store/useStore";
 
 const Profile = () => {

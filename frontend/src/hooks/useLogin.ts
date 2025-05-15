@@ -1,11 +1,12 @@
+import { AxiosError } from "axios";
 import { useState } from "react";
+import type { UseFormReset } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { axiosInstance } from "../utils/axiosInstance";
-import { AxiosError } from "axios";
-import { useGlobalStore } from "../store/useStore";
-import type { UseFormReset } from "react-hook-form";
+
 import type { LoginSchemaType } from "../schemas/authSchema";
+import { useGlobalStore } from "../store/useStore";
+import { axiosInstance } from "../utils/axiosInstance";
 
 const useLogin = (reset: UseFormReset<LoginSchemaType>) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);

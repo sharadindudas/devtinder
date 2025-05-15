@@ -1,5 +1,5 @@
-import { Link } from "react-router";
 import { FaArrowRight } from "react-icons/fa6";
+import { Link } from "react-router";
 
 const HeroSection = () => {
     return (

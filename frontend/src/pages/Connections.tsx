@@ -1,6 +1,6 @@
 import ConnectionCard from "../components/Cards/ConnectionCard";
-import { useGlobalStore } from "../store/useStore";
 import useGetConnections from "../hooks/useGetConnections";
+import { useGlobalStore } from "../store/useStore";
 
 const Connections = () => {
     useGetConnections();

@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 import { io, Socket } from "socket.io-client";
-import { useGlobalStore } from "../store/useStore";
-import notificationSound from "../assets/sounds/notification.mp3";
+
 import type { Message } from "../@types/types";
+import notificationSound from "../assets/sounds/notification.mp3";
+import { useGlobalStore } from "../store/useStore";
 
 const useConnectSocket = (userId: string) => {
     const { user, updateMessages } = useGlobalStore();

@@ -1,5 +1,5 @@
-import * as yup from "yup";
 import validator from "validator";
+import * as yup from "yup";
 
 export const emailSchema = yup
     .string()

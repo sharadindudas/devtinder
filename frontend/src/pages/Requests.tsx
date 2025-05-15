@@ -1,6 +1,6 @@
+import RequestCard from "../components/Cards/RequestCard";
 import useGetRequestsReceived from "../hooks/useGetRequestsReceived";
 import { useGlobalStore } from "../store/useStore";
-import RequestCard from "../components/Cards/RequestCard";
 
 const Requests = () => {
     useGetRequestsReceived();

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
+
 import type { Connection, Message, Request, User } from "../@types/types";
 
 interface GlobalState {

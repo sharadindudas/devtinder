@@ -1,5 +1,5 @@
-import { truncateString } from "../../utils/truncateString";
 import type { User } from "../../@types/types";
+import { truncateString } from "../../utils/truncateString";
 
 const ProfileCard = ({ user }: { user: User }) => {
     const { name, about, age, gender, photoUrl } = user;

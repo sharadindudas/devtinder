@@ -1,7 +1,8 @@
-import { useEffect } from "react";
-import { axiosInstance } from "../utils/axiosInstance";
 import { AxiosError } from "axios";
+import { useEffect } from "react";
+
 import { useGlobalStore } from "../store/useStore";
+import { axiosInstance } from "../utils/axiosInstance";
 
 const useGetAllMessages = (userId: string) => {
     const { addMessages } = useGlobalStore();

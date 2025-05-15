@@ -1,4 +1,5 @@
 import * as yup from "yup";
+
 import { ageSchema, emailSchema, genderSchema, passwordSchema } from "./commonSchema";
 
 // Signup schema

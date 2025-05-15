@@ -1,10 +1,11 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { yupResolver } from "@hookform/resolvers/yup";
-import ToolTipMessage from "../Common/ToolTipMessage";
-import { EditProfileSchema, type EditProfileSchemaType } from "../../schemas/profileSchema";
-import useEditProfile from "../../hooks/useEditProfile";
+
 import type { User } from "../../@types/types";
+import useEditProfile from "../../hooks/useEditProfile";
+import { EditProfileSchema, type EditProfileSchemaType } from "../../schemas/profileSchema";
+import ToolTipMessage from "../Common/ToolTipMessage";
 
 const EditProfile = ({ user }: { user: User }) => {
     const {
@@ -52,7 +53,9 @@ const EditProfile = ({ user }: { user: User }) => {
                     className="mt-6 space-y-6 text-sm">
                     {/* Name */}
                     <div className="form-control w-full space-y-1">
-                        <label className="label">
+                        <label
+                            htmlFor="name"
+                            className="label">
                             <span className="label-text">Name</span>
                         </label>
                         <input
@@ -67,7 +70,9 @@ const EditProfile = ({ user }: { user: User }) => {
 
                     {/* Email */}
                     <div className="form-control w-full space-y-1">
-                        <label className="label">
+                        <label
+                            htmlFor="email"
+                            className="label">
                             <span className="label-text">Email</span>
                         </label>
                         <input

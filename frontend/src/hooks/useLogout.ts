@@ -1,8 +1,9 @@
+import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { axiosInstance } from "../utils/axiosInstance";
-import { AxiosError } from "axios";
+
 import { useGlobalStore } from "../store/useStore";
+import { axiosInstance } from "../utils/axiosInstance";
 
 const useLogout = () => {
     const navigate = useNavigate();

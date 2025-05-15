@@ -1,7 +1,8 @@
-import { Link } from "react-router";
 import { FaCode } from "react-icons/fa";
-import { useGlobalStore } from "../../store/useStore";
+import { Link } from "react-router";
+
 import useLogout from "../../hooks/useLogout";
+import { useGlobalStore } from "../../store/useStore";
 
 const Header = () => {
     const { user } = useGlobalStore();

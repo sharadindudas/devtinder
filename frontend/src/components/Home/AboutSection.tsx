@@ -1,6 +1,6 @@
-import { IoCode } from "react-icons/io5";
-import { HiUsers } from "react-icons/hi2";
 import { FiZap } from "react-icons/fi";
+import { HiUsers } from "react-icons/hi2";
+import { IoCode } from "react-icons/io5";
 
 const AboutSection = () => {
     return (
@@ -10,8 +10,8 @@ const AboutSection = () => {
                     <div className="space-y-2">
                         <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Why DevTinder?</h2>
                         <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                            Find your perfect match in the tech world. Whether you're looking for a coding partner, mentor, or just expanding your
-                            network.
+                            Find your perfect match in the tech world. Whether you&apos;re looking for a coding partner, mentor, or just expanding
+                            your network.
                         </p>
                     </div>
                 </div>

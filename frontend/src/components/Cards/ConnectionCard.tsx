@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
-import { truncateString } from "../../utils/truncateString";
+
 import type { Connection } from "../../@types/types";
+import { truncateString } from "../../utils/truncateString";
 
 const ConnectionCard = ({ connection }: { connection: Connection }) => {
     const { _id: userId, photoUrl, name, about } = connection;
@@ -12,7 +13,7 @@ const ConnectionCard = ({ connection }: { connection: Connection }) => {
                 <img
                     src={photoUrl}
                     className="w-12 h-12 md:w-16 md:h-16 rounded-full"
-                    alt="photo"
+                    alt="connection-img"
                     loading="lazy"
                 />
                 <div className="text-left space-y-1">
