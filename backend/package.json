@@ -11,6 +11,15 @@
         "format": "prettier --write \"src/**/*.{ts,js,json,css,md,mjs}\"",
         "prepare": "husky"
     },
+    "lint-staged": {
+        "src/**/*.{ts,tsx,js,jsx}": [
+            "eslint --fix",
+            "prettier --write"
+        ],
+        "src/**/*.{json,css,md,mjs}": [
+            "prettier --write"
+        ]
+    },
     "keywords": [
         "nodejs",
         "express",
@@ -61,3 +70,4 @@
         "typescript": "^5.8.3"
     }
 }
+
