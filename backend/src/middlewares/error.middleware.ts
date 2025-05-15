@@ -3,7 +3,7 @@ import { ErrorHandler } from "../utils/handlers";
 import { ValidationError } from "yup";
 import { logger } from "../utils/logger";
 
-export const errorMiddleware: ErrorRequestHandler = (err: ErrorHandler, _req, res, next) => {
+export const errorMiddleware: ErrorRequestHandler = (err: ErrorHandler, _req, res, _next) => {
     // Log all errors
     console.error(err);
     logger.error(err.message);
