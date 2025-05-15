@@ -3,6 +3,7 @@ import { ErrorHandler } from "../utils/handlers";
 import { ValidationError } from "yup";
 import { logger } from "../utils/logger";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const errorMiddleware: ErrorRequestHandler = (err: ErrorHandler, _req, res, _next) => {
     // Log all errors
     console.error(err);
