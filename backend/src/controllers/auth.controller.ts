@@ -1,7 +1,7 @@
 import { RequestHandler, Response } from "express";
 import { AsyncHandler, ErrorHandler } from "../utils/handlers";
 import { ApiResponse } from "../@types/types";
-import { LoginSchema, LoginSchemaType, SignupSchema, SignupSchemaType } from "../schemas/auth.schema";
+import { LoginSchema, LoginSchemaType, SignupSchema, SignupSchemaType } from "../validations/auth.schema";
 import { UserModel } from "../models/user.model";
 
 // Signup

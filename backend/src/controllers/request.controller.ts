@@ -8,7 +8,7 @@ import {
     ReviewConnectionRequestSchemaType,
     SendConnectionRequestSchema,
     SendConnectionRequestSchemaType
-} from "../schemas/request.schema";
+} from "../validations/request.schema";
 
 // Send connection request
 const sendConnectionRequest = AsyncHandler(async (req, res: Response<ApiResponse>) => {

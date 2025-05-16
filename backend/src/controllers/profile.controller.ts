@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { AsyncHandler, ErrorHandler } from "../utils/handlers";
 import { ApiResponse } from "../@types/types";
-import { ChangePasswordSchema, ChangePasswordSchemaType, EditProfileSchema, EditProfileSchemaType } from "../schemas/profile.schema";
+import { ChangePasswordSchema, ChangePasswordSchemaType, EditProfileSchema, EditProfileSchemaType } from "../validations/profile.schema";
 
 // View profile
 const viewProfile = AsyncHandler(async (req, res: Response<ApiResponse>) => {

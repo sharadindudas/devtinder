@@ -3,7 +3,7 @@ import { AsyncHandler } from "../utils/handlers";
 import { ApiResponse } from "../@types/types";
 import { ConnectionRequestModel } from "../models/request.model";
 import { UserModel } from "../models/user.model";
-import { PaginationSchema } from "../schemas/common.schema";
+import { PaginationSchema } from "../validations/common.schema";
 
 const USER_SAFE_DATA = "name gender age photoUrl about skills";
 
