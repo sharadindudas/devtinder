@@ -29,7 +29,7 @@ app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 10000, message: "Too many req
 app.use(morganMiddleware);
 
 setupSwagger(app);
-app.get("/api/v1/health", healthRouter);
+app.use("/api/v1/health", healthRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/profile", profileRouter);
 app.use("/api/v1/user", userRouter);
