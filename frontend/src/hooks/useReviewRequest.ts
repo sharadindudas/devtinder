@@ -5,26 +5,26 @@ import { useGlobalStore } from "../store/useStore";
 import { axiosInstance } from "../utils/axiosInstance";
 
 const useReviewRequest = (requestId: string) => {
-    const { updateRequests } = useGlobalStore();
+  const { updateRequests } = useGlobalStore();
 
-    const handleReviewRequest = async (status: string) => {
-        const toastId = toast.loading("Loading...");
-        try {
-            const response = await axiosInstance.post(`/request/review/${status}/${requestId}`);
-            if (response.data.success) {
-                updateRequests(requestId);
-                toast.success(response.data.message);
-            }
-        } catch (err) {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
-        } finally {
-            toast.dismiss(toastId);
-        }
-    };
+  const handleReviewRequest = async (status: string) => {
+    const toastId = toast.loading("Loading...");
+    try {
+      const response = await axiosInstance.post(`/request/review/${status}/${requestId}`);
+      if (response.data.success) {
+        updateRequests(requestId);
+        toast.success(response.data.message);
+      }
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
+      }
+    } finally {
+      toast.dismiss(toastId);
+    }
+  };
 
-    return { handleReviewRequest };
+  return { handleReviewRequest };
 };
 
 export default useReviewRequest;

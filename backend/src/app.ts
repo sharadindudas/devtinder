@@ -16,7 +16,6 @@ import chatRouter from "./routes/chat.routes";
 import healthRouter from "./routes/health.routes";
 import { FRONTEND_URL } from "./config/config";
 import { initializeSocket } from "./utils/socket";
-import { setupSwagger } from "./config/swagger";
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
@@ -28,7 +27,6 @@ app.use(cors({ origin: FRONTEND_URL, credentials: true, methods: ["GET", "POST",
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 10000, message: "Too many requests from this IP, please try again later" }));
 app.use(morganMiddleware);
 
-setupSwagger(app);
 app.use("/api/v1/health", healthRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/profile", profileRouter);

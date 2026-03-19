@@ -9,33 +9,33 @@ import { useGlobalStore } from "../store/useStore";
 import { axiosInstance } from "../utils/axiosInstance";
 
 const useLogin = (reset: UseFormReset<LoginSchemaType>) => {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const { addUser } = useGlobalStore();
-    const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { addUser } = useGlobalStore();
+  const navigate = useNavigate();
 
-    const handleLogin = async (data: LoginSchemaType) => {
-        setIsLoading(true);
-        const toastId = toast.loading("Loading...");
+  const handleLogin = async (data: LoginSchemaType) => {
+    setIsLoading(true);
+    const toastId = toast.loading("Loading...");
 
-        try {
-            const response = await axiosInstance.post("/auth/login", data);
-            if (response.data.success) {
-                toast.success(response.data.message);
-                addUser(response.data.data);
-                navigate("/feed", { replace: true });
-                reset();
-            }
-        } catch (err) {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
-        } finally {
-            setIsLoading(false);
-            toast.dismiss(toastId);
-        }
-    };
+    try {
+      const response = await axiosInstance.post("/auth/login", data);
+      if (response.data.success) {
+        toast.success(response.data.message);
+        addUser(response.data.data);
+        navigate("/feed", { replace: true });
+        reset();
+      }
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
+      }
+    } finally {
+      setIsLoading(false);
+      toast.dismiss(toastId);
+    }
+  };
 
-    return { isLoading, handleLogin };
+  return { isLoading, handleLogin };
 };
 
 export default useLogin;
