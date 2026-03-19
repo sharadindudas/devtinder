@@ -1,6 +1,6 @@
-# 🧠 DevTinder – Database Schema Design
+# 🧠 DevTinder – Database Schema Design (MongoDB)
 
-This document defines the **database architecture** for DevTinder — a real-time developer networking platform focused on intelligent matching and real-time communication.
+This document defines the database architecture for **DevTinder** — a real-time developer networking platform focused on intelligent matching and real-time communication.
 
 ---
 
@@ -8,11 +8,11 @@ This document defines the **database architecture** for DevTinder — a real-tim
 
 The schema is designed with:
 
-* ✅ **Normalized relational structure (PostgreSQL)**
-* ✅ **Scalable messaging system**
-* ✅ **Graph-based connection modeling**
-* ✅ **Real-time readiness (Socket.io + Redis)**
-* ✅ **Future extensibility (group chat, recommendations, analytics)**
+* ✅ Document-based structure (MongoDB)
+* ✅ Optimized read performance (denormalized where needed)
+* ✅ Scalable messaging system
+* ✅ Flexible schema for future features
+* ✅ Real-time readiness (Socket.io + Redis)
 
 ---
 
@@ -20,149 +20,138 @@ The schema is designed with:
 
 Stores core user information.
 
-* `id` – Unique user identifier (UUID)
-* `name` – Display name
-* `email` – Unique login identifier
-* `password` – Secure credential storage
-* `bio` – User description
-* `avatar` – Profile image
-* `github` – External developer profile
-* `experience_level` – beginner / intermediate / advanced
-* `last_seen_at` – Last active timestamp (used for offline status)
-* `created_at` – Record creation time
-* `updated_at` – Last update time
+```
+id → Unique user identifier (ObjectId)
+name → Display name
+email → Unique login identifier
+password → Secure credential storage (hashed)
+bio → User description
+avatar → Profile image
+github → External developer profile
 
----
+experience_level → beginner / intermediate / advanced
 
-## 🧠 Skills (Skill Tagging System)
+skills → array of strings (e.g., ["react", "node"])
+interests → array of strings (e.g., ["open source", "startups"])
 
-### skills
+last_seen_at → Last active timestamp (fallback for offline status)
+created_at → Record creation time
+updated_at → Last update time
+```
 
-* `id` – Unique skill identifier
-* `name` – Skill name (e.g., React, Node.js)
-
-### user_skills
-
-* `user_id`
-* `skill_id`
-
-👉 Enables efficient **many-to-many mapping** for matching algorithms.
-
----
-
-## 🎯 Interests
-
-### interests
-
-* `id`
-* `name` (e.g., Open Source, Freelancing, Startups)
-
-### user_interests
-
-* `user_id`
-* `interest_id`
-
-👉 Helps improve **match relevance and personalization**
+> 💡 Skills and interests are embedded for faster reads and simpler queries
 
 ---
 
 ## 🔄 Swipes (Feed Control)
 
-* `id`
-* `user_id` – Who swiped
-* `target_user_id` – Who was seen
-* `action` – like / pass
-* `created_at`
+```
+id → Unique identifier
+user_id → Who swiped
+target_user_id → Who was seen
+action → like / pass
+created_at → Timestamp
+```
 
-👉 Prevents duplicate recommendations and tracks user preferences
+**Constraint:**
+
+* A user can swipe another user only once
+* Enforced using a unique index on `(user_id, target_user_id)`
+
+**Purpose:**
+
+* Prevent duplicate recommendations
+* Track user preferences
 
 ---
 
-## ❤️ Connections (Graph Model)
-
-* `id`
-* `requester_id`
-* `receiver_id`
-* `status` – pending / accepted / rejected / blocked
-* `created_at`
-
-### ⚠️ Important Rule
-
-Always store:
+## ❤️ Connections (Relationship Model)
 
 ```
-user1_id = LEAST(A, B)
-user2_id = GREATEST(A, B)
+id → Unique identifier
+users → array of two user ids
+status → pending / accepted / rejected / blocked
+created_at → Timestamp
 ```
 
-👉 Ensures:
+**MongoDB Approach:**
 
-* No duplicate connections
-* Clean graph representation
+* Store users in sorted order OR handle both combinations in queries
+
+**Purpose:**
+
+* Represents matches between users
+* Acts like a graph relationship
 
 ---
 
 ## 💬 Conversations
 
-* `id`
-* `created_at`
+```
+id → Unique identifier
+participants → array of user ids
+created_at → Timestamp
+```
 
-👉 Represents a **chat container**
-
----
-
-## 👥 Conversation Participants
-
-* `conversation_id`
-* `user_id`
-* `joined_at`
-
-👉 Defines **who is part of a conversation**
+> 💡 Supports future group chat by simply adding more participants
 
 ---
 
 ## 💬 Messages
 
-* `id`
-* `conversation_id`
-* `sender_id`
-* `content`
-* `created_at`
-* `delivered_at`
-* `seen_at`
+```
+id → Unique identifier
+conversation_id → reference to conversation
+sender_id → sender user id
+content → message text
+
+created_at → message sent time
+delivered_at → delivery time
+seen_at → read time
+```
 
 ### 🔥 Message Lifecycle
 
-| State          | Meaning                  |
-| -------------- | ------------------------ |
-| `created_at`   | Message sent             |
-| `delivered_at` | Message reached receiver |
-| `seen_at`      | Message read by receiver |
+| Field        | Meaning           |
+| ------------ | ----------------- |
+| created_at   | Message sent      |
+| delivered_at | Message delivered |
+| seen_at      | Message read      |
 
 ---
 
 ## 🔔 Notifications
 
-* `user_id`
-* `type` – message / connection / match
-* `reference_id`
-* `is_read`
-* `created_at`
+```
+id → Unique identifier
+user_id → receiver
+type → message / connection / match
+reference_id → related entity id
+is_read → boolean
+created_at → timestamp
+```
 
-👉 Powers:
+**Used for:**
 
-* Notification system
+* Notifications
 * Unread indicators
 
 ---
 
 ## 🚫 Blocks (Safety System)
 
-* `blocker_id`
-* `blocked_id`
-* `created_at`
+```
+id → Unique identifier
+blocker_id → user who blocks
+blocked_id → user being blocked
+created_at → timestamp
+```
 
-👉 Prevents:
+**Constraint:**
+
+* Unique index on `(blocker_id, blocked_id)`
+
+**Prevents:**
 
 * Messaging
 * Feed visibility
@@ -171,55 +160,63 @@ user2_id = GREATEST(A, B)
 
 ## ⚡ Indexing Strategy
 
-* Swipes → fast feed filtering
-* Connections → quick relationship lookup
-* Messages → optimized chat queries
-* Skills → efficient matching
+**Users**
+
+* `email` → unique
+* `skills` → for matching
+* `interests` → for matching
+
+**Swipes**
+
+* `(user_id, target_user_id)` → unique
+
+**Connections**
+
+* `users` → fast lookup
+
+**Messages**
+
+* `conversation_id` → efficient chat queries
 
 ---
 
 ## 🧠 Presence (Handled Outside DB)
 
-Presence is **NOT stored in database**
+Presence is **NOT stored in MongoDB**
 
 Instead:
 
-* 🟢 Redis → real-time online/offline
-* ⚫ Database → `last_seen_at` fallback
+* 🟢 Redis → real-time online/offline status
+* ⚫ MongoDB → `last_seen_at` fallback
 
 ---
 
 ## 🔥 Key Design Decisions
 
-### 1. Conversation-Based Messaging
+### 1. Document-Based Optimization
 
-Messages are not stored as arrays.
-They are normalized for:
+* Skills & interests are embedded
+* Reduces joins
+* Improves performance
+
+### 2. Conversation-Based Messaging
+
+* Messages stored as separate documents (NOT arrays)
+
+**Benefits:**
 
 * Pagination
 * Scalability
 * Real-time delivery
 
----
+### 3. Flexible Schema Design
 
-### 2. Graph-Based Connections
+* Easy to extend
+* Supports evolving features
 
-Connections use a canonical `(min, max)` ordering to:
+### 4. Time Handling
 
-* Avoid duplicates
-* Simplify queries
-
----
-
-### 3. Timezone Handling
-
-All timestamps use:
-
-```
-TIMESTAMPTZ
-```
-
-👉 Ensures global consistency
+* Stored as MongoDB Date (ISO format)
 
 ---
 
@@ -227,9 +224,9 @@ TIMESTAMPTZ
 
 * Group chats
 * Message attachments
-* Smart matching algorithm
+* Smart recommendation engine
 * Activity analytics
-* Recommendation engine
+* AI-based matching
 
 ---
 
@@ -240,8 +237,14 @@ This schema supports:
 * ✅ Real-time messaging
 * ✅ Intelligent matching
 * ✅ Scalable architecture
-* ✅ Production-ready backend design
+* ✅ Flexible backend design
 
 ---
 
-> 💡 Designed with a focus on **clean architecture, scalability, and real-world system behavior**
+## 💡 Final Note
+
+This MongoDB design prioritizes:
+
+* Performance (fewer joins)
+* Flexibility (schema evolution)
+* Real-world scalability
