@@ -1,23 +1,37 @@
-import { Document, ObjectId, Schema, models, model } from "mongoose";
-import { User } from "./user.model";
+import { Document, type ObjectId, Schema, models, model } from "mongoose";
 
-export interface Message extends Document {
-  _id: ObjectId;
-  senderId: User;
-  message: string;
+interface Message extends Document {
+  conversationId: ObjectId;
+  senderId: ObjectId;
+  content: string;
+  deliveredAt?: Date;
+  seenAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const messageSchema: Schema<Message> = new Schema(
   {
+    conversationId: {
+      type: Schema.Types.ObjectId,
+      ref: "Conversation",
+      required: true
+    },
     senderId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true
     },
-    message: {
+    content: {
       type: String,
-      required: [true, "Please provide the message"],
+      required: true,
       trim: true
+    },
+    deliveredAt: {
+      type: Date
+    },
+    seenAt: {
+      type: Date
     }
   },
   { timestamps: true, versionKey: false }

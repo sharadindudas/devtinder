@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MONGODB_URL } from "../config/config";
+import { MONGODB_URL } from "./config";
 import { logger } from "../utils/logger";
 
 export const connectMongoDB = async () => {

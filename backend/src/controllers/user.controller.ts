@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AsyncHandler } from "../utils/handlers";
-import { ApiResponse } from "../@types/types";
+import { ApiResponse } from "../types/express";
 import { ConnectionRequestModel } from "../models/request.model";
 import { UserModel } from "../models/user.model";
 import { PaginationSchema } from "../validations/common.schema";

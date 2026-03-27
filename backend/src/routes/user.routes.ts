@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { userAuth } from "../middlewares/auth.middleware";
+import { requireAuth } from "../middlewares/auth.middleware";
 import { connectionRequestsReceived, allConnections, userFeed } from "../controllers/user.controller";
 
 const userRouter = Router();
-userRouter.get("/requests/received", userAuth, connectionRequestsReceived);
-userRouter.get("/connections", userAuth, allConnections);
-userRouter.get("/feed", userAuth, userFeed);
+userRouter.get("/requests/received", requireAuth, connectionRequestsReceived);
+userRouter.get("/connections", requireAuth, allConnections);
+userRouter.get("/feed", requireAuth, userFeed);
 
 export default userRouter;

@@ -1,18 +1,19 @@
-import { Document, ObjectId, Schema, models, model } from "mongoose";
+import { Document, Schema, models, model } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config/config";
 
 export interface User extends Document {
-  _id: ObjectId;
   name: string;
   email: string;
   password: string;
-  age: number;
-  gender: string;
-  about: string;
+  bio: string;
+  avatarUrl: string;
+  githubUrl?: string;
+  experienceLevel: string;
   skills: string[];
-  photoUrl: string;
+  interests: string[];
+  lastSeenAt: Date;
   createdAt: Date;
   updatedAt: Date;
   validatePassword: (password: string) => Promise<boolean>;
@@ -23,53 +24,65 @@ const userSchema: Schema<User> = new Schema(
   {
     name: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
     email: {
       type: String,
-      required: true
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true
     },
     password: {
       type: String,
       required: true
     },
-    age: {
-      type: Number
-    },
-    gender: {
+    bio: {
       type: String,
-      enum: {
-        values: ["male", "female"],
-        message: `{VALUE} is not a valid gender type`
-      }
+      default: "This is the default bio section"
     },
-    about: {
-      type: String,
-      default: "This is the default about section"
-    },
-    skills: [String],
-    photoUrl: {
+    avatarUrl: {
       type: String,
       default: "https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg"
+    },
+    githubUrl: {
+      type: String
+    },
+    experienceLevel: {
+      type: String,
+      enum: {
+        values: ["beginner", "intermediate", "advanced"],
+        message: `{VALUE} is not a valid experience level`
+      },
+      default: "beginner"
+    },
+    skills: {
+      type: [String],
+      default: []
+    },
+    interests: {
+      type: [String],
+      default: []
+    },
+    lastSeenAt: {
+      type: Date,
+      default: Date.now
     }
   },
   { timestamps: true, versionKey: false }
 );
 
-// Hash the password
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
   }
-  next();
 });
 
-// Validate of password
 userSchema.methods.validatePassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
-// Generate jwt
 userSchema.methods.generateJWT = function () {
   return jwt.sign(
     {

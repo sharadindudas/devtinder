@@ -1,36 +1,24 @@
-import { RequestHandler, Response } from "express";
-import { AsyncHandler, ErrorHandler } from "../utils/handlers";
-import { ApiResponse } from "../@types/types";
-import { LoginSchema, LoginSchemaType, SignupSchema, SignupSchemaType } from "../validations/auth.schema";
+import { NODE_ENV } from "../config/config";
 import { UserModel } from "../models/user.model";
+import { AsyncHandler, ErrorHandler } from "../utils/handlers";
+import { LoginSchema, SignupSchema } from "../validations/auth.schema";
 
-// Signup
-const signup = AsyncHandler(async (req, res: Response<ApiResponse>) => {
-  // Validation of data
-  const { name, email, password, age, gender } = await SignupSchema.validate(req.body as SignupSchemaType, {
-    abortEarly: false,
-    stripUnknown: true
-  });
+export const signup = AsyncHandler(async (req, res, next) => {
+  const { name, email, password } = res.locals.validatedData as SignupSchema;
 
-  // Check if the user already exists in the db or not
-  const userExists = await UserModel.findOne({ email });
-  if (userExists) {
-    throw new ErrorHandler("User already exists", 409);
+  const existingUser = await UserModel.findOne({ email });
+  if (existingUser) {
+    throw new ErrorHandler("Email is already registered", 409);
   }
 
-  // Create a new user
   const newUser = await UserModel.create({
     name,
     email,
-    password,
-    age,
-    gender
+    password
   });
 
-  // Remove sensitive data
   newUser.password = undefined!;
 
-  // Return the response
   res.status(201).json({
     success: true,
     message: "Registered successfully",
@@ -38,59 +26,47 @@ const signup = AsyncHandler(async (req, res: Response<ApiResponse>) => {
   });
 });
 
-// Login
-const login = AsyncHandler(async (req, res: Response<ApiResponse>) => {
-  // Validation of data
-  const { email, password } = await LoginSchema.validate(req.body as LoginSchemaType, { abortEarly: false, stripUnknown: true });
+export const login = AsyncHandler(async (req, res, next) => {
+  const { email, password } = res.locals.validatedData as LoginSchema;
 
-  // Check if the user exists in the db or not
-  const userExists = await UserModel.findOne({ email });
-  if (!userExists) {
-    throw new ErrorHandler("User does not exists", 404);
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    throw new ErrorHandler("User does not exist", 404);
   }
 
-  // Validation of password
-  const isValidPassword = await userExists.validatePassword(password);
+  const isValidPassword = await user.validatePassword(password);
   if (!isValidPassword) {
     throw new ErrorHandler("Invalid Credentials", 401);
   }
 
-  // Generate jwt
-  const token = userExists.generateJWT();
+  const token = user.generateJWT();
 
-  // Remove sensitive data
-  userExists.password = undefined!;
+  user.password = undefined!;
 
-  // Set the cookie and return the response
   res
     .cookie("devtinderToken", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: NODE_ENV === "production",
       maxAge: 7 * 24 * 60 * 60 * 1000
     })
     .status(200)
     .json({
       success: true,
       message: "Logged in successfully",
-      data: userExists
+      data: user
     });
 });
 
-// Logout
-const logout: RequestHandler = (_req, res: Response<ApiResponse>) => {
-  // Remove the cookie and return the response
+export const logout = AsyncHandler(async (req, res, next) => {
   res
     .clearCookie("devtinderToken", {
+      expires: new Date(Date.now()),
       httpOnly: true,
-      secure: true,
-      sameSite: "none"
+      secure: NODE_ENV === "production"
     })
     .status(200)
     .json({
       success: true,
       message: "Logged out successfully"
     });
-};
-
-export { signup, login, logout };
+});
