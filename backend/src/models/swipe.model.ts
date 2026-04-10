@@ -5,7 +5,6 @@ interface Swipe extends Document {
   targetUserId: ObjectId;
   action: "like" | "pass";
   createdAt: Date;
-  updatedAt: Date;
 }
 
 const swipeSchema: Schema<Swipe> = new Schema(
@@ -29,7 +28,7 @@ const swipeSchema: Schema<Swipe> = new Schema(
       required: true
     }
   },
-  { timestamps: true, versionKey: false }
+  { timestamps: true, versionKey: false, updatedAt: false }
 );
 
 swipeSchema.index({ userId: 1, targetUserId: 1 }, { unique: true });

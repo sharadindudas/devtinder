@@ -1,7 +1,7 @@
-import { NODE_ENV } from "../config/config";
-import { UserModel } from "../models/user.model";
-import { AsyncHandler, ErrorHandler } from "../utils/handlers";
-import { LoginSchema, SignupSchema } from "../validations/auth.schema";
+import { NODE_ENV } from "../../config/config";
+import { UserModel } from "../../models/user.model";
+import { AsyncHandler, ErrorHandler } from "../../utils/handlers";
+import { SignupSchema, LoginSchema } from "./auth.validator";
 
 export const signup = AsyncHandler(async (req, res, next) => {
   const { name, email, password } = res.locals.validatedData as SignupSchema;

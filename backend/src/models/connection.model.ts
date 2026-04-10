@@ -22,8 +22,8 @@ const connectionSchema: Schema<Connection> = new Schema(
         values: ["pending", "accepted", "rejected", "blocked"],
         message: `{VALUE} is not a valid connection status`
       },
-      default: "pending",
-      required: true
+      required: true,
+      default: "pending"
     }
   },
   { timestamps: true, versionKey: false }

@@ -1,21 +1,17 @@
-import express from "express";
-import cookieParser from "cookie-parser";
 import compression from "compression";
-import helmet from "helmet";
+import cookieParser from "cookie-parser";
 import cors from "cors";
+import express from "express";
 import rateLimit from "express-rate-limit";
-import http from "http";
-import { errorMiddleware } from "./middlewares/error.middleware";
-import { notfoundMiddleware } from "./middlewares/notfound.middleware";
-import { morganMiddleware } from "./middlewares/morgan.middleware";
-import authRouter from "./routes/auth.routes";
-import profileRouter from "./routes/profile.routes";
-import userRouter from "./routes/user.routes";
-import requestRouter from "./routes/request.routes";
-import chatRouter from "./routes/chat.routes";
-import healthRouter from "./routes/health.routes";
+import helmet from "helmet";
 import { FRONTEND_URL } from "./config/config";
-import { initializeSocket } from "./utils/socket";
+import { errorMiddleware } from "./middlewares/error.middleware";
+import { morganMiddleware } from "./middlewares/morgan.middleware";
+import { notfoundMiddleware } from "./middlewares/notfound.middleware";
+import authRouter from "./modules/auth/auth.routes";
+import healthRouter from "./modules/health/health.routes";
+import swipeRouter from "./modules/swipes/swipe.routes";
+import userRouter from "./modules/users/user.routes";
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
@@ -29,15 +25,10 @@ app.use(morganMiddleware);
 
 app.use("/api/v1/health", healthRouter);
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/profile", profileRouter);
 app.use("/api/v1/user", userRouter);
-app.use("/api/v1/request", requestRouter);
-app.use("/api/v1/chat", chatRouter);
+app.use("/api/v1/swipes", swipeRouter);
 
 app.use(errorMiddleware);
 app.use(notfoundMiddleware);
 
-const server = http.createServer(app);
-initializeSocket(server);
-
-export { app, server };
+export default app;

@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { passwordSchema } from "./common.schema";
+import { passwordSchema } from "../../validations/common";
 
 export const EditProfileSchema = v.object({
   bio: v.optional(v.pipe(v.string(), v.maxLength(300, "Bio cannot exceed 300 characters"))),

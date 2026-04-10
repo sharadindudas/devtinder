@@ -1,6 +1,6 @@
-import { UserModel } from "../models/user.model";
-import { AsyncHandler, ErrorHandler } from "../utils/handlers";
-import type { ChangePasswordSchema, EditProfileSchema } from "../validations/profile.schema";
+import { UserModel } from "../../models/user.model";
+import { AsyncHandler, ErrorHandler } from "../../utils/handlers";
+import { ChangePasswordSchema, EditProfileSchema } from "./user.validator";
 
 export const viewProfile = AsyncHandler(async (req, res, next) => {
   const loggedInUser = res.locals.user;

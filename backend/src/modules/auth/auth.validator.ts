@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { emailSchema, passwordSchema } from "./common.schema";
+import { emailSchema, passwordSchema } from "../../validations/common";
 
 export const SignupSchema = v.object({
   name: v.pipe(
