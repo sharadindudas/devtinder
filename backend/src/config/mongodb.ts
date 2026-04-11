@@ -4,7 +4,7 @@ import { logger } from "../utils/logger";
 
 export const connectMongoDB = async () => {
   try {
-    await mongoose.connect(MONGODB_URL, { dbName: "devtinder" });
+    await mongoose.connect(MONGODB_URL, { dbName: "devtinder-dev" });
     logger.info("MongoDB is connected successfully");
 
     mongoose.connection.on("disconnected", () => {

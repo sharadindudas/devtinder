@@ -12,6 +12,7 @@ import authRouter from "./modules/auth/auth.routes";
 import healthRouter from "./modules/health/health.routes";
 import swipeRouter from "./modules/swipes/swipe.routes";
 import userRouter from "./modules/users/user.routes";
+import feedRouter from "./modules/feed/feed.routes";
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
@@ -27,6 +28,7 @@ app.use("/api/v1/health", healthRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/swipes", swipeRouter);
+app.use("/api/v1/feed", feedRouter);
 
 app.use(errorMiddleware);
 app.use(notfoundMiddleware);

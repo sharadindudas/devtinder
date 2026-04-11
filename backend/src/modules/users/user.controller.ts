@@ -18,7 +18,7 @@ export const editProfile = AsyncHandler(async (req, res, next) => {
   const updateUserPayload = res.locals.validatedData as EditProfileSchema;
   const userId = res.locals.user._id;
 
-  await UserModel.findByIdAndUpdate(userId, updateUserPayload, { new: true, runValidators: true });
+  await UserModel.findByIdAndUpdate(userId, updateUserPayload, { returnDocument: "after", runValidators: true });
 
   res.status(200).json({
     success: true,

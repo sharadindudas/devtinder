@@ -2,7 +2,7 @@ import { ConnectionModel } from "../../models/connection.model";
 import { SwipeModel } from "../../models/swipe.model";
 import { UserModel } from "../../models/user.model";
 import { AsyncHandler, ErrorHandler } from "../../utils/handlers";
-import type { SwipeUserSchema } from "./swiper.validator";
+import type { SwipeUserSchema } from "./swipe.validator";
 
 export const swipeUser = AsyncHandler(async (req, res, next) => {
   const { action, targetUserId } = res.locals.validatedData as SwipeUserSchema;
