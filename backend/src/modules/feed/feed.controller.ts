@@ -1,41 +1,37 @@
-import { Types, type ObjectId } from "mongoose";
 import { BlockModel } from "../../models/block.model";
 import { ConnectionModel } from "../../models/connection.model";
 import { SwipeModel } from "../../models/swipe.model";
-import { AsyncHandler } from "../../utils/handlers";
 import { UserModel } from "../../models/user.model";
+import { AsyncHandler } from "../../utils/handlers";
 import type { FeedQuerySchema } from "./feed.validator";
 
 export const getFeed = AsyncHandler(async (req, res, next) => {
   const { page, limit } = res.locals.validatedData as FeedQuerySchema;
   const loggedInUser = res.locals.user;
 
-  const pageNumber = page ?? 1;
-  const limitNumber = limit ?? 10;
+  const pageNumber = page ?? 1,
+    limitNumber = limit ?? 10,
+    loggedInUserSkills = loggedInUser.skills,
+    loggedInUserInterests = loggedInUser.interests;
 
-  const loggedInUserId = loggedInUser._id;
-  const loggedInUserSkills = res.locals.user.skills;
-  const loggedInUserInterests = res.locals.user.interests;
+  const [existingSwipes, existingConnections, existingBlocks] = await Promise.all([
+    SwipeModel.find({ userId: loggedInUser._id }).select("targetUserId"),
+    ConnectionModel.find({ users: loggedInUser._id }).select("users"),
+    BlockModel.find({ $or: [{ blockerId: loggedInUser._id }, { blockedId: loggedInUser._id }] }).select("blockerId blockedId")
+  ]);
 
-  const existingSwipes = await SwipeModel.find({ userId: loggedInUserId }).select("targetUserId -_id");
   const swipedUserIds = existingSwipes.map((swipe) => swipe.targetUserId);
 
-  const existingConnections = await ConnectionModel.find({ users: loggedInUserId }).select("users -_id");
-  const connectionIds = existingConnections
-    .map((connection) => connection.users.filter((id: ObjectId) => id.toString() !== loggedInUserId.toString()))
-    .flat();
+  const connectionUserIds = existingConnections.flatMap((connection) => connection.users.filter((id) => !id.equals(loggedInUser._id)));
 
-  const existingBlocks = await BlockModel.find({
-    $or: [{ blockerId: loggedInUserId }, { blockedId: loggedInUserId }]
-  }).select("blockerId blockedId -_id");
-  const blockedIds = existingBlocks.map((block) => (block.blockerId.toString() !== loggedInUserId.toString() ? block.blockerId : block.blockedId));
+  const blockedUserIds = existingBlocks.map((block) => (block.blockerId.equals(loggedInUser._id) ? block.blockedId : block.blockerId));
 
-  const excludedUserIds = [...new Set([loggedInUserId.toString(), ...swipedUserIds, ...connectionIds, ...blockedIds].map((id) => id.toString()))];
-
-  const excludedObjectIds = excludedUserIds.map((id) => new Types.ObjectId(id));
+  const excludedUserIds = [
+    ...new Map([loggedInUser._id, ...swipedUserIds, ...connectionUserIds, ...blockedUserIds].map((id) => [id.toString(), id])).values()
+  ];
 
   const feed = await UserModel.aggregate([
-    { $match: { _id: { $nin: excludedObjectIds } } },
+    { $match: { _id: { $nin: excludedUserIds } } },
     { $project: { password: 0 } },
     {
       $addFields: {

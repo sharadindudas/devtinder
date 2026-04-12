@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware";
-import { changePassword, editProfile, viewProfile } from "./user.controller";
 import { validationMiddleware } from "../../middlewares/validation.middleware";
+import { changePassword, editProfile, viewProfile } from "./user.controller";
 import { ChangePasswordSchema, EditProfileSchema } from "./user.validator";
 
 const userRouter = Router();

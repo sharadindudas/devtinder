@@ -1,9 +1,9 @@
-import { Document, type ObjectId, Schema, models, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
-interface Notification extends Document {
-  userId: ObjectId;
+interface Notification {
+  userId: Types.ObjectId;
   type: "message" | "connection" | "match";
-  referenceId: ObjectId;
+  referenceId: Types.ObjectId;
   isRead: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -36,4 +36,4 @@ const notificationSchema: Schema<Notification> = new Schema(
   { timestamps: true, versionKey: false }
 );
 
-export const NotificationModel = models.Notification || model<Notification>("Notification", notificationSchema);
+export const NotificationModel = model<Notification>("Notification", notificationSchema);

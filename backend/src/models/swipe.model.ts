@@ -1,8 +1,8 @@
-import { Document, type ObjectId, Schema, models, model } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
-interface Swipe extends Document {
-  userId: ObjectId;
-  targetUserId: ObjectId;
+interface Swipe {
+  userId: Types.ObjectId;
+  targetUserId: Types.ObjectId;
   action: "like" | "pass";
   createdAt: Date;
 }
@@ -28,9 +28,9 @@ const swipeSchema: Schema<Swipe> = new Schema(
       required: true
     }
   },
-  { timestamps: true, versionKey: false, updatedAt: false }
+  { timestamps: { createdAt: true }, versionKey: false }
 );
 
 swipeSchema.index({ userId: 1, targetUserId: 1 }, { unique: true });
 
-export const SwipeModel = models.Swipe || model<Swipe>("Swipe", swipeSchema);
+export const SwipeModel = model<Swipe>("Swipe", swipeSchema);

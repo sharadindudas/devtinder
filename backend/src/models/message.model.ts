@@ -1,8 +1,8 @@
-import { Document, type ObjectId, Schema, models, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
-interface Message extends Document {
-  conversationId: ObjectId;
-  senderId: ObjectId;
+interface Message {
+  conversationId: Types.ObjectId;
+  senderId: Types.ObjectId;
   content: string;
   deliveredAt?: Date;
   seenAt?: Date;
@@ -37,4 +37,4 @@ const messageSchema: Schema<Message> = new Schema(
   { timestamps: true, versionKey: false }
 );
 
-export const MessageModel = models.Message || model<Message>("Message", messageSchema);
+export const MessageModel = model<Message>("Message", messageSchema);

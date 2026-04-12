@@ -1,10 +1,9 @@
-import { Document, type ObjectId, Schema, models, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
-interface Connection extends Document {
-  users: ObjectId[];
-  status: "pending" | "accepted" | "rejected" | "blocked";
+interface Connection {
+  users: Types.ObjectId[];
+  status: "accepted" | "blocked";
   createdAt: Date;
-  updatedAt: Date;
 }
 
 const connectionSchema: Schema<Connection> = new Schema(
@@ -19,14 +18,15 @@ const connectionSchema: Schema<Connection> = new Schema(
     status: {
       type: String,
       enum: {
-        values: ["pending", "accepted", "rejected", "blocked"],
+        values: ["accepted", "blocked"],
         message: `{VALUE} is not a valid connection status`
       },
-      required: true,
-      default: "pending"
+      required: true
     }
   },
-  { timestamps: true, versionKey: false }
+  { timestamps: { createdAt: true }, versionKey: false }
 );
 
-export const ConnectionModel = models.Connection || model<Connection>("Connection", connectionSchema);
+connectionSchema.index({ users: 1 }, { unique: true });
+
+export const ConnectionModel = model<Connection>("Connection", connectionSchema);

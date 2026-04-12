@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware";
-import { swipeUser } from "./swipe.controller";
 import { validationMiddleware } from "../../middlewares/validation.middleware";
+import { swipeUser } from "./swipe.controller";
 import { SwipeUserSchema } from "./swipe.validator";
 
 const swipeRouter = Router();

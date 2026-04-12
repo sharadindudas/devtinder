@@ -1,9 +1,10 @@
-import { Document, Schema, models, model } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { Schema, Types, model } from "mongoose";
 import { JWT_SECRET } from "../config/config";
 
-export interface User extends Document {
+export interface User {
+  _id: Types.ObjectId;
   name: string;
   email: string;
   password: string;
@@ -93,4 +94,4 @@ userSchema.methods.generateJWT = function () {
   );
 };
 
-export const UserModel = models.User || model<User>("User", userSchema);
+export const UserModel = model<User>("User", userSchema);

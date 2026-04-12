@@ -1,10 +1,9 @@
-import { Document, type ObjectId, Schema, models, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
-interface Block extends Document {
-  blockerId: ObjectId;
-  blockedId: ObjectId;
+interface Block {
+  blockerId: Types.ObjectId;
+  blockedId: Types.ObjectId;
   createdAt: Date;
-  updatedAt: Date;
 }
 
 const blockSchema: Schema<Block> = new Schema(
@@ -20,9 +19,9 @@ const blockSchema: Schema<Block> = new Schema(
       required: true
     }
   },
-  { timestamps: true, versionKey: false }
+  { timestamps: { createdAt: true }, versionKey: false }
 );
 
 blockSchema.index({ blockerId: 1, blockedId: 1 }, { unique: true });
 
-export const BlockModel = models.Block || model<Block>("Block", blockSchema);
+export const BlockModel = model<Block>("Block", blockSchema);

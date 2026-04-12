@@ -1,9 +1,8 @@
-import { Document, type ObjectId, Schema, models, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
-interface Conversation extends Document {
-  participants: ObjectId[];
+interface Conversation {
+  participants: Types.ObjectId[];
   createdAt: Date;
-  updatedAt: Date;
 }
 
 const conversationSchema: Schema<Conversation> = new Schema(
@@ -16,7 +15,7 @@ const conversationSchema: Schema<Conversation> = new Schema(
       }
     ]
   },
-  { timestamps: true, versionKey: false }
+  { timestamps: { createdAt: true }, versionKey: false }
 );
 
-export const ConversationModel = models.Conversation || model<Conversation>("Conversation", conversationSchema);
+export const ConversationModel = model<Conversation>("Conversation", conversationSchema);

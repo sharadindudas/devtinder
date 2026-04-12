@@ -1,5 +1,5 @@
-import * as v from "valibot";
 import { Types } from "mongoose";
+import * as v from "valibot";
 
 export const SwipeUserSchema = v.object({
   action: v.picklist(["like", "pass"], "Please provide the swipe action"),
