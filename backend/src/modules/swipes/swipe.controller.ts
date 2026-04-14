@@ -41,8 +41,12 @@ export const swipeUser = AsyncHandler(async (req, res, next) => {
 
     if (existingSwipe) {
       isMatch = true;
+
+      const [user1, user2] = [loggedInUserId.toString(), targetUserId.toString()].sort();
+
       await ConnectionModel.create({
-        users: [loggedInUserId, targetUserId],
+        user1,
+        user2,
         status: "accepted"
       });
     }

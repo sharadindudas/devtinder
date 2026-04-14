@@ -37,4 +37,6 @@ const messageSchema: Schema<Message> = new Schema(
   { timestamps: true, versionKey: false }
 );
 
+messageSchema.index({ conversationId: 1, createdAt: -1 });
+
 export const MessageModel = model<Message>("Message", messageSchema);

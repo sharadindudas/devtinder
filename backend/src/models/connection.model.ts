@@ -1,20 +1,24 @@
-import { Schema, Types, model } from "mongoose";
+import { Document, Schema, Types, model } from "mongoose";
 
-interface Connection {
-  users: Types.ObjectId[];
+interface Connection extends Document {
+  user1: Types.ObjectId;
+  user2: Types.ObjectId;
   status: "accepted" | "blocked";
   createdAt: Date;
 }
 
 const connectionSchema: Schema<Connection> = new Schema(
   {
-    users: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true
-      }
-    ],
+    user1: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+    user2: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
     status: {
       type: String,
       enum: {
@@ -27,6 +31,6 @@ const connectionSchema: Schema<Connection> = new Schema(
   { timestamps: { createdAt: true }, versionKey: false }
 );
 
-connectionSchema.index({ users: 1 }, { unique: true });
+connectionSchema.index({ user1: 1, user2: 1 }, { unique: true });
 
 export const ConnectionModel = model<Connection>("Connection", connectionSchema);

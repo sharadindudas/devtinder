@@ -18,4 +18,6 @@ const conversationSchema: Schema<Conversation> = new Schema(
   { timestamps: { createdAt: true }, versionKey: false }
 );
 
+conversationSchema.index({ participants: 1 }, { unique: true });
+
 export const ConversationModel = model<Conversation>("Conversation", conversationSchema);

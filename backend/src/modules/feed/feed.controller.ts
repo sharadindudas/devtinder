@@ -11,20 +11,20 @@ export const getFeed = AsyncHandler(async (req, res, next) => {
 
   const pageNumber = page ?? 1,
     limitNumber = limit ?? 10,
-    loggedInUserSkills = loggedInUser.skills,
-    loggedInUserInterests = loggedInUser.interests;
+    mySkills = loggedInUser.skills,
+    myInterests = loggedInUser.interests;
 
-  const [existingSwipes, existingConnections, existingBlocks] = await Promise.all([
+  const [mySwipes, myConnections, myBlocks] = await Promise.all([
     SwipeModel.find({ userId: loggedInUser._id }).select("targetUserId"),
-    ConnectionModel.find({ users: loggedInUser._id }).select("users"),
+    ConnectionModel.find({ $or: [{ user1: loggedInUser._id }, { user2: loggedInUser._id }] }).select("user1 user2"),
     BlockModel.find({ $or: [{ blockerId: loggedInUser._id }, { blockedId: loggedInUser._id }] }).select("blockerId blockedId")
   ]);
 
-  const swipedUserIds = existingSwipes.map((swipe) => swipe.targetUserId);
+  const swipedUserIds = mySwipes.map((swipe) => swipe.targetUserId);
 
-  const connectionUserIds = existingConnections.flatMap((connection) => connection.users.filter((id) => !id.equals(loggedInUser._id)));
+  const connectionUserIds = myConnections.map((connection) => (connection.user1.equals(loggedInUser._id) ? connection.user2 : connection.user1));
 
-  const blockedUserIds = existingBlocks.map((block) => (block.blockerId.equals(loggedInUser._id) ? block.blockedId : block.blockerId));
+  const blockedUserIds = myBlocks.map((block) => (block.blockerId.equals(loggedInUser._id) ? block.blockedId : block.blockerId));
 
   const excludedUserIds = [
     ...new Map([loggedInUser._id, ...swipedUserIds, ...connectionUserIds, ...blockedUserIds].map((id) => [id.toString(), id])).values()
@@ -36,10 +36,10 @@ export const getFeed = AsyncHandler(async (req, res, next) => {
     {
       $addFields: {
         skillScore: {
-          $size: { $setIntersection: ["$skills", loggedInUserSkills] }
+          $size: { $setIntersection: ["$skills", mySkills] }
         },
         interestScore: {
-          $size: { $setIntersection: ["$interests", loggedInUserInterests] }
+          $size: { $setIntersection: ["$interests", myInterests] }
         }
       }
     },
