@@ -1,6 +1,6 @@
-import { model, Schema, Types } from "mongoose";
+import { Document, model, Schema, Types } from "mongoose";
 
-interface Swipe {
+interface Swipe extends Document {
   userId: Types.ObjectId;
   targetUserId: Types.ObjectId;
   action: "like" | "pass";

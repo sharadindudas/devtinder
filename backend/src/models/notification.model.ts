@@ -1,6 +1,6 @@
-import { Schema, Types, model } from "mongoose";
+import { Document, Schema, Types, model } from "mongoose";
 
-interface Notification {
+interface Notification extends Document {
   userId: Types.ObjectId;
   type: "message" | "connection" | "match";
   referenceId: Types.ObjectId;

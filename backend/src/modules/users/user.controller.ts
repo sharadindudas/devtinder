@@ -1,5 +1,6 @@
 import { UserModel } from "../../models/user.model";
 import { AsyncHandler, ErrorHandler } from "../../utils/handlers";
+import { sendResponse } from "../../utils/response";
 import { ChangePasswordSchema, EditProfileSchema } from "./user.validator";
 
 export const viewProfile = AsyncHandler(async (req, res, next) => {
@@ -7,11 +8,7 @@ export const viewProfile = AsyncHandler(async (req, res, next) => {
 
   loggedInUser.password = undefined!;
 
-  res.status(200).json({
-    success: true,
-    message: "Fetched user profile successfully",
-    data: loggedInUser
-  });
+  sendResponse(res, 200, "Fetched user profile successfully", loggedInUser);
 });
 
 export const editProfile = AsyncHandler(async (req, res, next) => {
@@ -20,10 +17,7 @@ export const editProfile = AsyncHandler(async (req, res, next) => {
 
   await UserModel.findByIdAndUpdate(userId, updateUserPayload, { returnDocument: "after", runValidators: true });
 
-  res.status(200).json({
-    success: true,
-    message: "Updated profile successfully"
-  });
+  sendResponse(res, 200, "Updated profile successfully");
 });
 
 export const changePassword = AsyncHandler(async (req, res, next) => {
@@ -39,8 +33,5 @@ export const changePassword = AsyncHandler(async (req, res, next) => {
   user.password = newPassword;
   await user.save({ validateBeforeSave: false });
 
-  res.status(200).json({
-    success: true,
-    message: "Updated password successfully"
-  });
+  sendResponse(res, 200, "Updated password successfully");
 });

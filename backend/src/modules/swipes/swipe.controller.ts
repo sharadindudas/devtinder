@@ -2,6 +2,7 @@ import { ConnectionModel } from "../../models/connection.model";
 import { SwipeModel } from "../../models/swipe.model";
 import { UserModel } from "../../models/user.model";
 import { AsyncHandler, ErrorHandler } from "../../utils/handlers";
+import { sendResponse } from "../../utils/response";
 import type { SwipeUserSchema } from "./swipe.validator";
 
 export const swipeUser = AsyncHandler(async (req, res, next) => {
@@ -52,9 +53,7 @@ export const swipeUser = AsyncHandler(async (req, res, next) => {
     }
   }
 
-  res.status(201).json({
-    success: true,
-    message: isMatch ? `You matched with ${targetUser.name}!` : `You ${action === "like" ? "liked" : "passed on"} ${targetUser.name}`,
-    data: { isMatch }
+  sendResponse(res, 201, isMatch ? `You matched with ${targetUser.name}!` : `You ${action === "like" ? "liked" : "passed on"} ${targetUser.name}`, {
+    isMatch
   });
 });

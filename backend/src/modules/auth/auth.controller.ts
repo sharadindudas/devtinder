@@ -1,6 +1,7 @@
 import { NODE_ENV } from "../../config/config";
 import { UserModel } from "../../models/user.model";
 import { AsyncHandler, ErrorHandler } from "../../utils/handlers";
+import { sendResponse } from "../../utils/response";
 import { LoginSchema, SignupSchema } from "./auth.validator";
 
 export const signup = AsyncHandler(async (req, res, next) => {
@@ -19,11 +20,7 @@ export const signup = AsyncHandler(async (req, res, next) => {
 
   newUser.password = undefined!;
 
-  res.status(201).json({
-    success: true,
-    message: "Registered successfully",
-    data: newUser
-  });
+  sendResponse(res, 201, "Registered successfully", newUser);
 });
 
 export const login = AsyncHandler(async (req, res, next) => {

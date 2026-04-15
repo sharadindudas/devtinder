@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { AsyncHandler } from "../../utils/handlers";
+import { sendResponse } from "../../utils/response";
 
 export const healthCheck = AsyncHandler(async (_req, res) => {
   const mongoState = mongoose.connection.readyState;
@@ -14,14 +15,10 @@ export const healthCheck = AsyncHandler(async (_req, res) => {
   const mongoStatus = mongoStateMap[mongoState] ?? "unknown";
   const isHealthy = mongoState === 1;
 
-  res.status(isHealthy ? 200 : 503).json({
-    success: isHealthy,
-    message: isHealthy ? "Server is healthy" : "Server is unhealthy",
-    data: {
-      server: "running",
-      mongodb: mongoStatus,
-      uptime: `${Math.floor(process.uptime())}s`,
-      timestamp: new Date().toISOString()
-    }
+  sendResponse(res, isHealthy ? 200 : 503, isHealthy ? "Server is healthy" : "Server is unhealthy", {
+    server: "running",
+    mongodb: mongoStatus,
+    uptime: `${Math.floor(process.uptime())}s`,
+    timestamp: new Date().toISOString()
   });
 });

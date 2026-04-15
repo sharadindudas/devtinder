@@ -1,11 +1,11 @@
 import { Types } from "mongoose";
 import * as v from "valibot";
 
-export const DeleteConnectionSchema = v.object({
+export const RemoveConnectionSchema = v.object({
   connectionId: v.pipe(
     v.string(),
     v.check((id) => Types.ObjectId.isValid(id), "Please provide a valid connection id")
   )
 });
-export type DeleteConnectionSchema = v.InferOutput<typeof DeleteConnectionSchema>;
+export type RemoveConnectionSchema = v.InferOutput<typeof RemoveConnectionSchema>;
 

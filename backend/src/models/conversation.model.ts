@@ -1,6 +1,6 @@
-import { Schema, Types, model } from "mongoose";
+import { Document, Schema, Types, model } from "mongoose";
 
-interface Conversation {
+interface Conversation extends Document {
   participants: Types.ObjectId[];
   createdAt: Date;
 }

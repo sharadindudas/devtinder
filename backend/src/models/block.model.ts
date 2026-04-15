@@ -1,6 +1,6 @@
-import { Schema, Types, model } from "mongoose";
+import { Document, Schema, Types, model } from "mongoose";
 
-interface Block {
+interface Block extends Document {
   blockerId: Types.ObjectId;
   blockedId: Types.ObjectId;
   createdAt: Date;

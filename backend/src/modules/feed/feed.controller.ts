@@ -3,6 +3,7 @@ import { ConnectionModel } from "../../models/connection.model";
 import { SwipeModel } from "../../models/swipe.model";
 import { UserModel } from "../../models/user.model";
 import { AsyncHandler } from "../../utils/handlers";
+import { sendResponse } from "../../utils/response";
 import type { FeedQuerySchema } from "./feed.validator";
 
 export const getFeed = AsyncHandler(async (req, res, next) => {
@@ -54,16 +55,12 @@ export const getFeed = AsyncHandler(async (req, res, next) => {
     { $limit: limitNumber }
   ]);
 
-  res.status(200).json({
-    success: true,
-    message: "Fetched feed successfully",
-    data: {
-      feed,
-      pagination: {
-        page: pageNumber,
-        limit: limitNumber,
-        hasMore: feed.length === limitNumber
-      }
+  sendResponse(res, 200, "Fetched feed successfully", {
+    feed,
+    pagination: {
+      page: pageNumber,
+      limit: limitNumber,
+      hasMore: feed.length === limitNumber
     }
   });
 });

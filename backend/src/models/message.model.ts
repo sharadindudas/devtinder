@@ -1,6 +1,6 @@
-import { Schema, Types, model } from "mongoose";
+import { Document, Schema, Types, model } from "mongoose";
 
-interface Message {
+interface Message extends Document {
   conversationId: Types.ObjectId;
   senderId: Types.ObjectId;
   content: string;
