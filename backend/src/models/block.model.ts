@@ -19,7 +19,7 @@ const blockSchema: Schema<Block> = new Schema(
       required: true
     }
   },
-  { timestamps: { createdAt: true }, versionKey: false }
+  { timestamps: { updatedAt: false }, versionKey: false }
 );
 
 blockSchema.index({ blockerId: 1, blockedId: 1 }, { unique: true });

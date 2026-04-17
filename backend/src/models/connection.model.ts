@@ -28,7 +28,7 @@ const connectionSchema: Schema<Connection> = new Schema(
       required: true
     }
   },
-  { timestamps: { createdAt: true }, versionKey: false }
+  { timestamps: { updatedAt: false }, versionKey: false }
 );
 
 connectionSchema.index({ user1: 1, user2: 1 }, { unique: true });

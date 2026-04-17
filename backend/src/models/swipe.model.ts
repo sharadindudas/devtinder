@@ -28,7 +28,7 @@ const swipeSchema: Schema<Swipe> = new Schema(
       required: true
     }
   },
-  { timestamps: { createdAt: true }, versionKey: false }
+  { timestamps: { updatedAt: false }, versionKey: false }
 );
 
 swipeSchema.index({ userId: 1, targetUserId: 1 }, { unique: true });

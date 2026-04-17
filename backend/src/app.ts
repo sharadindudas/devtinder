@@ -14,6 +14,7 @@ import swipeRouter from "./modules/swipes/swipe.routes";
 import userRouter from "./modules/users/user.routes";
 import feedRouter from "./modules/feed/feed.routes";
 import connectionRouter from "./modules/connections/connection.route";
+import conversationRouter from "./modules/conversations/conversation.routes";
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
@@ -31,6 +32,7 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/swipes", swipeRouter);
 app.use("/api/v1/feed", feedRouter);
 app.use("/api/v1/connections", connectionRouter);
+app.use("/api/v1/conversations", conversationRouter);
 
 app.use(errorMiddleware);
 app.use(notfoundMiddleware);

@@ -15,7 +15,7 @@ const conversationSchema: Schema<Conversation> = new Schema(
       }
     ]
   },
-  { timestamps: { createdAt: true }, versionKey: false }
+  { timestamps: { updatedAt: false }, versionKey: false }
 );
 
 conversationSchema.index({ participants: 1 }, { unique: true });

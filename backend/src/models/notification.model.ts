@@ -6,7 +6,6 @@ interface Notification extends Document {
   referenceId: Types.ObjectId;
   isRead: boolean;
   createdAt: Date;
-  updatedAt: Date;
 }
 
 const notificationSchema: Schema<Notification> = new Schema(
@@ -33,7 +32,7 @@ const notificationSchema: Schema<Notification> = new Schema(
       default: false
     }
   },
-  { timestamps: true, versionKey: false }
+  { timestamps: { updatedAt: false }, versionKey: false }
 );
 
 export const NotificationModel = model<Notification>("Notification", notificationSchema);
