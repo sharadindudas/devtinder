@@ -96,3 +96,27 @@ const feed = await UserModel.aggregate([
   { $limit: limitNumber }
 ]);
 ```
+
+## Redis
+
+### Redis Set
+
+This is used to store data into a group (set) as here we are just stroring list of unique strings
+
+Example:
+
+sadd (Set add command)
+```
+const SWIPES_KEY = `user:${loggedInUserId}:swipes`;
+await redis.sadd(SWIPES_KEY, targetUserId.toString());
+await redis.expire(SWIPES_KEY, 86400);
+```
+srem (Set remove command)
+```
+pipeline.srem(`user:${user1}:connections`, user2);
+pipeline.srem(`user:${user2}:connections`, user1);
+```
+
+## Socket
+- ```io``` is the main global server that handles all the connections and manages connections globally by listening and broadcasting
+- ```socket``` is the single user connection that is used to listen and respond to events for that specific user

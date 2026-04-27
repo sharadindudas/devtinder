@@ -9,3 +9,7 @@ declare global {
     }
   }
 }
+
+type JwtUserPayload = {
+  _id: string;
+};

@@ -4,6 +4,7 @@ import { UserModel } from "../../models/user.model";
 import { AsyncHandler, ErrorHandler } from "../../utils/handlers";
 import { sendResponse } from "../../utils/response";
 import type { SwipeUserSchema } from "./swipe.validator";
+import { redis } from "../../config/redis";
 
 export const swipeUser = AsyncHandler(async (req, res, next) => {
   const { action, targetUserId } = res.locals.validatedData as SwipeUserSchema;
@@ -32,6 +33,10 @@ export const swipeUser = AsyncHandler(async (req, res, next) => {
     action
   });
 
+  const SWIPES_KEY = `user:${loggedInUserId}:swipes`;
+  await redis.sadd(SWIPES_KEY, targetUserId.toString());
+  await redis.expire(SWIPES_KEY, 86400);
+
   let isMatch = false;
   if (action === "like") {
     const existingSwipe = await SwipeModel.findOne({
@@ -45,11 +50,15 @@ export const swipeUser = AsyncHandler(async (req, res, next) => {
 
       const [user1, user2] = [loggedInUserId.toString(), targetUserId.toString()].sort();
 
-      await ConnectionModel.create({
-        user1,
-        user2,
-        status: "accepted"
-      });
+      await ConnectionModel.findOneAndUpdate({ user1, user2 }, { $setOnInsert: { user1, user2, status: "accepted" } }, { upsert: true, new: true });
+
+      const pipeline = redis.pipeline();
+      pipeline.sadd(`user:${user1}:connections`, user2!);
+      pipeline.sadd(`user:${user2}:connections`, user1!);
+
+      pipeline.expire(`user:${user1}:connections`, 86400);
+      pipeline.expire(`user:${user2}:connections`, 86400);
+      await pipeline.exec();
     }
   }
 

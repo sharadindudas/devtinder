@@ -1,3 +1,4 @@
+import { redis } from "../../config/redis";
 import { ConnectionModel } from "../../models/connection.model";
 import { AsyncHandler, ErrorHandler } from "../../utils/handlers";
 import { sendResponse } from "../../utils/response";
@@ -15,7 +16,6 @@ export const getAllConnections = AsyncHandler(async (req, res, next) => {
 
   const allConnectionsData = allConnections.map((connection) => {
     const matchProfile = connection.user1._id.equals(loggedInUser._id) ? connection.user2 : connection.user1;
-
     return {
       connectionId: connection._id,
       createdAt: connection.createdAt,
@@ -36,15 +36,29 @@ export const removeConnection = AsyncHandler(async (req, res, next) => {
       $or: [{ user1: loggedInUser._id }, { user2: loggedInUser._id }],
       status: "accepted"
     },
-    {
-      $set: { status: "blocked" }
-    },
+    { $set: { status: "blocked" } },
     { new: true }
   );
+
   if (!updatedConnection) {
     throw new ErrorHandler("Connection not found or already removed", 404);
   }
 
+  const user1 = updatedConnection.user1.toString();
+  const user2 = updatedConnection.user2.toString();
+
+  const pipeline = redis.pipeline();
+
+  pipeline.srem(`user:${user1}:connections`, user2);
+  pipeline.srem(`user:${user2}:connections`, user1);
+
+  pipeline.sadd(`user:${user1}:blocks`, user2);
+  pipeline.sadd(`user:${user2}:blocks`, user1);
+
+  pipeline.expire(`user:${user1}:blocks`, 86400);
+  pipeline.expire(`user:${user2}:blocks`, 86400);
+
+  await pipeline.exec();
+
   sendResponse(res, 200, "Connection removed successfully");
 });
-

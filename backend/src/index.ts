@@ -4,7 +4,7 @@ import app from "./app";
 import { PORT, SERVER_URL } from "./config/config";
 import { connectMongoDB } from "./config/mongodb";
 import { logger } from "./utils/logger";
-import { initializeSocket } from "./socket";
+import { initializeSocket } from "./utils/socket";
 
 process.on("unhandledRejection", (reason) => {
   logger.error("Unhandled Rejection:", reason);
@@ -20,7 +20,7 @@ process.on("uncaughtException", (err) => {
   await connectMongoDB();
 
   const server = http.createServer(app);
-  
+
   initializeSocket(server);
 
   server.listen(PORT, () => {

@@ -1,4 +1,5 @@
-import { BlockModel } from "../../models/block.model";
+import mongoose from "mongoose";
+import { redis } from "../../config/redis";
 import { ConnectionModel } from "../../models/connection.model";
 import { SwipeModel } from "../../models/swipe.model";
 import { UserModel } from "../../models/user.model";
@@ -15,20 +16,55 @@ export const getFeed = AsyncHandler(async (req, res, next) => {
     mySkills = loggedInUser.skills,
     myInterests = loggedInUser.interests;
 
-  const [mySwipes, myConnections, myBlocks] = await Promise.all([
-    SwipeModel.find({ userId: loggedInUser._id }).select("targetUserId"),
-    ConnectionModel.find({ $or: [{ user1: loggedInUser._id }, { user2: loggedInUser._id }] }).select("user1 user2"),
-    BlockModel.find({ $or: [{ blockerId: loggedInUser._id }, { blockedId: loggedInUser._id }] }).select("blockerId blockedId")
-  ]);
+  const SWIPES_KEY = `user:${loggedInUser._id}:swipes`;
+  const CONNECTIONS_KEY = `user:${loggedInUser._id}:connections`;
+  const BLOCKS_KEY = `user:${loggedInUser._id}:blocks`;
 
-  const swipedUserIds = mySwipes.map((swipe) => swipe.targetUserId);
+  const pipeline = redis.pipeline();
+  pipeline.smembers(SWIPES_KEY);
+  pipeline.smembers(CONNECTIONS_KEY);
+  pipeline.smembers(BLOCKS_KEY);
 
-  const connectionUserIds = myConnections.map((connection) => (connection.user1.equals(loggedInUser._id) ? connection.user2 : connection.user1));
+  const results = (await pipeline.exec()) ?? [];
 
-  const blockedUserIds = myBlocks.map((block) => (block.blockerId.equals(loggedInUser._id) ? block.blockedId : block.blockerId));
+  let swipedUserIds = (results[0]?.[1] as string[]) || [];
+  let connectionUserIds = (results[1]?.[1] as string[]) || [];
+  let blockedUserIds = (results[2]?.[1] as string[]) || [];
+
+  if (swipedUserIds.length === 0 && connectionUserIds.length === 0 && blockedUserIds.length === 0) {
+    const [mySwipes, myConnections] = await Promise.all([
+      SwipeModel.find({ userId: loggedInUser._id }).select("targetUserId"),
+      ConnectionModel.find({ $or: [{ user1: loggedInUser._id }, { user2: loggedInUser._id }] }).select("user1 user2 status")
+    ]);
+
+    swipedUserIds = mySwipes.map((swipe) => swipe.targetUserId.toString());
+
+    myConnections.forEach((connection) => {
+      const otherUserId = connection.user1.toString() === loggedInUser._id.toString() ? connection.user2.toString() : connection.user1.toString();
+
+      if (connection.status === "accepted") {
+        connectionUserIds.push(otherUserId);
+      } else if (connection.status === "blocked") {
+        blockedUserIds.push(otherUserId);
+      }
+    });
+
+    const savePipeline = redis.pipeline();
+    if (swipedUserIds.length > 0) savePipeline.sadd(SWIPES_KEY, ...swipedUserIds);
+    if (connectionUserIds.length > 0) savePipeline.sadd(CONNECTIONS_KEY, ...connectionUserIds);
+    if (blockedUserIds.length > 0) savePipeline.sadd(BLOCKS_KEY, ...blockedUserIds);
+
+    savePipeline.expire(SWIPES_KEY, 86400);
+    savePipeline.expire(CONNECTIONS_KEY, 86400);
+    savePipeline.expire(BLOCKS_KEY, 86400);
+
+    await savePipeline.exec();
+  }
 
   const excludedUserIds = [
-    ...new Map([loggedInUser._id, ...swipedUserIds, ...connectionUserIds, ...blockedUserIds].map((id) => [id.toString(), id])).values()
+    ...new Map(
+      [loggedInUser._id.toString(), ...swipedUserIds, ...connectionUserIds, ...blockedUserIds].map((id) => [id, new mongoose.Types.ObjectId(id)])
+    ).values()
   ];
 
   const feed = await UserModel.aggregate([
