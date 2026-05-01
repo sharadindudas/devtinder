@@ -3,12 +3,9 @@ import { ErrorHandler } from "../utils/handlers";
 import { logger } from "../utils/logger";
 import { ValiError } from "valibot";
 
-export const errorMiddleware: ErrorRequestHandler = (err: ErrorHandler, req, res, next) => {
+export const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
   console.error(err);
   logger.error(err.message);
-
-  err.message ||= "Internal Server Error Occurred";
-  err.statusCode ||= 500;
 
   if (err instanceof ValiError) {
     const message = err.issues?.[0]?.message || "Validation failed";
@@ -18,8 +15,12 @@ export const errorMiddleware: ErrorRequestHandler = (err: ErrorHandler, req, res
     });
   }
 
-  res.status(err.statusCode).json({
+  if (err instanceof ErrorHandler) {
+    return res.status(err.statusCode).json({ success: false, message: err.message });
+  }
+
+  res.status(500).json({
     success: false,
-    message: err.message
+    message: err?.message || "Internal Server Error Occurred"
   });
 };

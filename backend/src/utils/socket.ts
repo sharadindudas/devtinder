@@ -20,26 +20,26 @@ export const initializeSocket = (server: HttpServer) => {
   io.use((socket, next) => {
     try {
       const cookies = socket.handshake.headers.cookie;
-      if (!cookies) return next(new Error("Authentication error: No cookies found"));
+      if (!cookies) return next(new Error("No cookies found"));
 
       const parsedCookies = Object.fromEntries(
         cookies.split("; ").map((c) => {
-          const [key, value] = c.split("=");
-          return [key, value];
+          const idx = c.indexOf("=");
+          return [c.slice(0, idx), c.slice(idx + 1)];
         })
       );
 
       const token = parsedCookies.devtinderToken;
-      if (!token) return next(new Error("Authentication error: Token missing"));
+      if (!token) return next(new Error("Token missing"));
 
-      const decodedPayload = jwt.verify(token, JWT_SECRET) as JwtUserPayload;
+      const decodedPayload = jwt.verify(token, "123456") as JwtUserPayload;
 
       socket.data.userId = decodedPayload._id;
 
       next();
     } catch (error) {
       logger.error("Socket authentication failed", error);
-      next(new Error("Authentication error: Invalid token"));
+      next(new Error("Invalid token"));
     }
   });
 
@@ -107,6 +107,7 @@ export const initializeSocket = (server: HttpServer) => {
       const remaining = await redis.scard(`user_sockets:${userId}`);
 
       if (remaining === 0) {
+        await redis.del(`user_sockets:${userId}`);
         await redis.srem("online_users", userId);
       }
     });
