@@ -27,7 +27,7 @@ export const getAllConnections = AsyncHandler(async (req, res, next) => {
 });
 
 export const removeConnection = AsyncHandler(async (req, res, next) => {
-  const { connectionId } = res.locals.validatedData as RemoveConnectionSchema;
+  const { connectionId } = res.locals.params as RemoveConnectionSchema;
   const loggedInUser = res.locals.user;
 
   const updatedConnection = await ConnectionModel.findOneAndUpdate(
@@ -62,3 +62,4 @@ export const removeConnection = AsyncHandler(async (req, res, next) => {
 
   sendResponse(res, 200, "Connection removed successfully");
 });
+

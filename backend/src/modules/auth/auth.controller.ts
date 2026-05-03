@@ -5,7 +5,7 @@ import { sendResponse } from "../../utils/response";
 import { LoginSchema, SignupSchema } from "./auth.validator";
 
 export const signup = AsyncHandler(async (req, res, next) => {
-  const { name, email, password } = res.locals.validatedData as SignupSchema;
+  const { name, email, password } = res.locals.body as SignupSchema;
 
   const existingUser = await UserModel.findOne({ email });
   if (existingUser) {
@@ -24,7 +24,7 @@ export const signup = AsyncHandler(async (req, res, next) => {
 });
 
 export const login = AsyncHandler(async (req, res, next) => {
-  const { email, password } = res.locals.validatedData as LoginSchema;
+  const { email, password } = res.locals.body as LoginSchema;
 
   const user = await UserModel.findOne({ email });
   if (!user) {

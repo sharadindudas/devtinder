@@ -7,7 +7,7 @@ import type { SwipeUserSchema } from "./swipe.validator";
 import { redis } from "../../config/redis";
 
 export const swipeUser = AsyncHandler(async (req, res, next) => {
-  const { action, targetUserId } = res.locals.validatedData as SwipeUserSchema;
+  const { action, targetUserId } = res.locals.params as SwipeUserSchema;
   const loggedInUserId = res.locals.user._id;
 
   if (loggedInUserId.toString() === targetUserId) {

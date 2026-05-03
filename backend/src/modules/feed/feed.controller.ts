@@ -8,7 +8,7 @@ import { sendResponse } from "../../utils/response";
 import type { OffsetPaginationSchema } from "../../validations/common";
 
 export const getFeed = AsyncHandler(async (req, res, next) => {
-  const { page, limit } = res.locals.validatedData as OffsetPaginationSchema;
+  const { page, limit } = res.locals.query as OffsetPaginationSchema;
   const loggedInUser = res.locals.user;
 
   const pageNumber = page ?? 1,

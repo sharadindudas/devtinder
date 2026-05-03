@@ -5,7 +5,11 @@ declare global {
   namespace Express {
     interface Locals {
       user: User;
-      validatedData?: unknown;
+      body?: unknown;
+      query?: unknown;
+      params?: unknown;
+      headers?: unknown;
+      cookies?: unknown;
     }
   }
 }

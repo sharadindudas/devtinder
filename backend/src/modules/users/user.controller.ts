@@ -12,7 +12,7 @@ export const viewProfile = AsyncHandler(async (req, res, next) => {
 });
 
 export const editProfile = AsyncHandler(async (req, res, next) => {
-  const updateUserPayload = res.locals.validatedData as EditProfileSchema;
+  const updateUserPayload = res.locals.body as EditProfileSchema;
   const userId = res.locals.user._id;
 
   await UserModel.findByIdAndUpdate(userId, updateUserPayload, { returnDocument: "after", runValidators: true });
@@ -21,7 +21,7 @@ export const editProfile = AsyncHandler(async (req, res, next) => {
 });
 
 export const changePassword = AsyncHandler(async (req, res, next) => {
-  const { oldPassword, newPassword } = res.locals.validatedData as ChangePasswordSchema;
+  const { oldPassword, newPassword } = res.locals.body as ChangePasswordSchema;
 
   const user = res.locals.user;
 

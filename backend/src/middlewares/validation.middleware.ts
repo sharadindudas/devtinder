@@ -7,6 +7,6 @@ export const validationMiddleware = (location: RequestLocation, schema: v.Object
   AsyncHandler(async (req, res, next) => {
     const data = req[location];
     const validatedData = await v.parseAsync(schema, data, { abortEarly: true });
-    res.locals.validatedData = validatedData;
+    res.locals[location] = validatedData;
     next();
   });
