@@ -1,36 +1,31 @@
 import { ConversationModel } from "../../models/conversation.model";
-import { UserModel } from "../../models/user.model";
-import { AsyncHandler, ErrorHandler } from "../../utils/handlers";
+import { AsyncHandler } from "../../utils/handlers";
 import { sendResponse } from "../../utils/response";
-import type { CreateConversationSchema } from "./conversation.validator";
 
-export const createConversation = AsyncHandler(async (req, res, next) => {
-  const { participantId } = res.locals.validatedData as CreateConversationSchema;
-
+export const getAllConversations = AsyncHandler(async (req, res, next) => {
   const loggedInUser = res.locals.user;
 
-  const participantExists = await UserModel.findById(participantId);
-  if (!participantExists) {
-    throw new ErrorHandler("Participant not found", 404);
-  }
+  const conversations = await ConversationModel.find({
+    participants: loggedInUser._id
+  })
+    .populate("participants", "name avatar")
+    .sort({ "lastMessage.sentAt": -1 });
 
-  const conversationExists = await ConversationModel.findOne({
-    participants: { $all: [loggedInUser._id, participantId] }
+  const conversationsData = conversations.map((conversation) => {
+    const participants = conversation.participants;
+
+    const otherUser = participants.find((participant) => !participant._id.equals(loggedInUser._id));
+
+    return {
+      conversationId: conversation._id,
+      otherUser,
+      lastMessage: conversation.lastMessage,
+      createdAt: conversation.createdAt
+    };
   });
-  if (conversationExists) {
-    throw new ErrorHandler("Conversation already exists", 409);
-  }
 
-  const sortedIds = [loggedInUser._id.toString(), participantId.toString()].sort();
-
-  const newConversation = await ConversationModel.create({
-    participants: sortedIds
-  });
-
-  sendResponse(res, 201, "Created conversation successfully", newConversation);
+  sendResponse(res, 200, "Fetched all conversations successfully", conversationsData);
 });
-
-export const getAllConversations = AsyncHandler(async (req, res, next) => {});
 
 export const getMessages = AsyncHandler(async (req, res, next) => {});
 

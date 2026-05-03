@@ -5,10 +5,10 @@ import { SwipeModel } from "../../models/swipe.model";
 import { UserModel } from "../../models/user.model";
 import { AsyncHandler } from "../../utils/handlers";
 import { sendResponse } from "../../utils/response";
-import type { FeedQuerySchema } from "./feed.validator";
+import type { OffsetPaginationSchema } from "../../validations/common";
 
 export const getFeed = AsyncHandler(async (req, res, next) => {
-  const { page, limit } = res.locals.validatedData as FeedQuerySchema;
+  const { page, limit } = res.locals.validatedData as OffsetPaginationSchema;
   const loggedInUser = res.locals.user;
 
   const pageNumber = page ?? 1,

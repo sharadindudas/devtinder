@@ -32,7 +32,7 @@ export const initializeSocket = (server: HttpServer) => {
       const token = parsedCookies.devtinderToken;
       if (!token) return next(new Error("Token missing"));
 
-      const decodedPayload = jwt.verify(token, "123456") as JwtUserPayload;
+      const decodedPayload = jwt.verify(token, JWT_SECRET) as JwtUserPayload;
 
       socket.data.userId = decodedPayload._id;
 
@@ -55,6 +55,7 @@ export const initializeSocket = (server: HttpServer) => {
 
     socket.on("sendMessage", async ({ targetUserId, content }) => {
       try {
+        // 1. Sort IDs alphabetically to guarantee a deterministic array order
         const [user1, user2] = [userId.toString(), targetUserId.toString()].sort();
 
         const isConnected = await ConnectionModel.exists({
@@ -67,18 +68,21 @@ export const initializeSocket = (server: HttpServer) => {
           return socket.emit("messageError", { message: "You are not connected to this user" });
         }
 
+        // 2. We use exact array match [user1, user2] instead of $all here.
+        // Because we sorted the IDs above, the order is 100% reliable.
+        // Using $all with upsert causes a MongoDB code 54 crash (NotSingleValueField).
         const conversation = await ConversationModel.findOneAndUpdate(
           {
-            participants: { $all: [userId, targetUserId] }
+            participants: [user1, user2]
           },
           {
             $setOnInsert: {
-              participants: [userId, targetUserId]
+              participants: [user1, user2]
             }
           },
           {
-            new: true,
-            upsert: true
+            upsert: true,
+            returnDocument: "after"
           }
         );
 
@@ -86,6 +90,16 @@ export const initializeSocket = (server: HttpServer) => {
           conversationId: conversation._id,
           senderId: userId,
           content
+        });
+
+        await ConversationModel.findByIdAndUpdate(conversation._id, {
+          $set: {
+            lastMessage: {
+              content: message.content,
+              senderId: userId,
+              sentAt: message.createdAt
+            }
+          }
         });
 
         const populatedMessage = await message.populate("senderId", "name avatarUrl");

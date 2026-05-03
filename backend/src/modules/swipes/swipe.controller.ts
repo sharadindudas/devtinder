@@ -50,7 +50,11 @@ export const swipeUser = AsyncHandler(async (req, res, next) => {
 
       const [user1, user2] = [loggedInUserId.toString(), targetUserId.toString()].sort();
 
-      await ConnectionModel.findOneAndUpdate({ user1, user2 }, { $setOnInsert: { user1, user2, status: "accepted" } }, { upsert: true, new: true });
+      await ConnectionModel.findOneAndUpdate(
+        { user1, user2 },
+        { $setOnInsert: { user1, user2, status: "accepted" } },
+        { upsert: true, returnDocument: "after" }
+      );
 
       const pipeline = redis.pipeline();
       pipeline.sadd(`user:${user1}:connections`, user2!);

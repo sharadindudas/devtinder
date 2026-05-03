@@ -9,8 +9,8 @@ export interface User extends Document {
   email: string;
   password: string;
   bio: string;
-  avatarUrl: string;
-  githubUrl?: string;
+  avatar: string;
+  github?: string;
   experienceLevel: string;
   skills: string[];
   interests: string[];
@@ -43,11 +43,11 @@ const userSchema: Schema<User> = new Schema(
       type: String,
       default: "This is the default bio section"
     },
-    avatarUrl: {
+    avatar: {
       type: String,
       default: "https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg"
     },
-    githubUrl: {
+    github: {
       type: String
     },
     experienceLevel: {
