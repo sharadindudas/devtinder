@@ -1,5 +1,6 @@
 import { ConversationModel } from "../../models/conversation.model";
 import { MessageModel } from "../../models/message.model";
+import type { User } from "../../models/user.model";
 import { AsyncHandler, ErrorHandler } from "../../utils/handlers";
 import { sendResponse } from "../../utils/response";
 import type { GetMessagesParamsSchema, GetMessagesQuerySchema } from "./conversation.validator";
@@ -10,7 +11,7 @@ export const getAllConversations = AsyncHandler(async (req, res, next) => {
   const conversations = await ConversationModel.find({
     participants: loggedInUser._id
   })
-    .populate("participants", "name avatar")
+    .populate<{ participants: User[] }>("participants", "name avatar isDeleted")
     .sort({ "lastMessage.sentAt": -1 });
 
   const conversationIds = conversations.map((conversation) => conversation._id);
@@ -38,9 +39,18 @@ export const getAllConversations = AsyncHandler(async (req, res, next) => {
 
     const otherUser = participants.find((participant) => !participant._id.equals(loggedInUser._id));
 
+    const otherUserData =
+      !otherUser || otherUser.isDeleted
+        ? {
+            _id: otherUser?._id,
+            name: "Deleted User",
+            avatar: "https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg"
+          }
+        : otherUser;
+
     return {
       conversationId: conversation._id,
-      otherUser,
+      otherUser: otherUserData,
       lastMessage: conversation.lastMessage,
       createdAt: conversation.createdAt,
       unreadCount: unreadCountMap.get(conversation._id.toString()) || 0

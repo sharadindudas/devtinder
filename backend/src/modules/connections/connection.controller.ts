@@ -11,8 +11,8 @@ export const getAllConnections = AsyncHandler(async (req, res, next) => {
     $or: [{ user1: loggedInUser._id }, { user2: loggedInUser._id }],
     status: "accepted"
   })
-    .populate("user1", "name email avatarUrl skills interests")
-    .populate("user2", "name email avatarUrl skills interests");
+    .populate("user1", "name email avatar skills interests")
+    .populate("user2", "name email avatar skills interests");
 
   const allConnectionsData = allConnections.map((connection) => {
     const matchProfile = connection.user1._id.equals(loggedInUser._id) ? connection.user2 : connection.user1;

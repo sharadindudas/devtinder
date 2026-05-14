@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware";
 import { validationMiddleware } from "../../middlewares/validation.middleware";
-import { changePassword, editProfile, viewProfile } from "./user.controller";
+import { changePassword, deleteAccount, editProfile, viewProfile } from "./user.controller";
 import { ChangePasswordSchema, EditProfileSchema } from "./user.validator";
 
 const userRouter = Router();
 userRouter.get("/view", requireAuth, viewProfile);
 userRouter.patch("/edit", requireAuth, validationMiddleware("body", EditProfileSchema), editProfile);
 userRouter.put("/password", requireAuth, validationMiddleware("body", ChangePasswordSchema), changePassword);
+userRouter.delete("/delete", requireAuth, deleteAccount);
 
 export default userRouter;

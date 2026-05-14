@@ -8,7 +8,8 @@ export interface User extends Document {
   name: string;
   email: string;
   password: string;
-  bio: string;
+  isOnboarded: boolean;
+  bio?: string;
   avatar: string;
   github?: string;
   experienceLevel: string;
@@ -17,6 +18,8 @@ export interface User extends Document {
   lastSeenAt: Date;
   createdAt: Date;
   updatedAt: Date;
+  isDeleted: boolean;
+  deletedAt?: Date;
   validatePassword: (password: string) => Promise<boolean>;
   generateJWT: () => string;
 }
@@ -38,6 +41,10 @@ const userSchema: Schema<User> = new Schema(
     password: {
       type: String,
       required: true
+    },
+    isOnboarded: {
+      type: Boolean,
+      default: false
     },
     bio: {
       type: String,
@@ -69,7 +76,9 @@ const userSchema: Schema<User> = new Schema(
     lastSeenAt: {
       type: Date,
       default: Date.now
-    }
+    },
+    isDeleted: { type: Boolean, default: false },
+    deletedAt: { type: Date }
   },
   { timestamps: true, versionKey: false }
 );

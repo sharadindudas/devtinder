@@ -1,3 +1,4 @@
+import { NODE_ENV } from "../../config/config";
 import { UserModel } from "../../models/user.model";
 import { AsyncHandler, ErrorHandler } from "../../utils/handlers";
 import { sendResponse } from "../../utils/response";
@@ -34,4 +35,18 @@ export const changePassword = AsyncHandler(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   sendResponse(res, 200, "Updated password successfully");
+});
+
+export const deleteAccount = AsyncHandler(async (req, res, next) => {
+  const user = res.locals.user;
+
+  await UserModel.findByIdAndUpdate(user._id, { isDeleted: true, deletedAt: new Date() });
+
+  res.clearCookie("devtinderToken", {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+    secure: NODE_ENV === "production"
+  });
+
+  sendResponse(res, 200, "Account deleted successfully");
 });

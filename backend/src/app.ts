@@ -19,10 +19,10 @@ import conversationRouter from "./modules/conversations/conversation.routes";
 const app = express();
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(cors({ origin: FRONTEND_URL, credentials: true, methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"] }));
 app.use(cookieParser());
 app.use(compression());
 app.use(helmet());
-app.use(cors({ origin: FRONTEND_URL, credentials: true, methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"] }));
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 10000, message: "Too many requests from this IP, please try again later" }));
 app.use(morganMiddleware);
 

@@ -2,6 +2,7 @@ import * as v from "valibot";
 import { passwordSchema } from "../../validations/common";
 
 export const EditProfileSchema = v.object({
+  isOnboarded: v.optional(v.boolean()),
   bio: v.optional(v.pipe(v.string(), v.maxLength(300, "Bio cannot exceed 300 characters"))),
   github: v.optional(v.pipe(v.string(), v.url("Please provide a valid URL"))),
   avatar: v.optional(v.pipe(v.string(), v.url("Please provide a valid image URL"))),

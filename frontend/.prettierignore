@@ -4,3 +4,5 @@ dist
 build
 coverage
 public
+routeTree.gen.ts
+.tanstack

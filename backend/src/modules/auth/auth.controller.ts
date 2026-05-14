@@ -40,30 +40,21 @@ export const login = AsyncHandler(async (req, res, next) => {
 
   user.password = undefined!;
 
-  res
-    .cookie("devtinderToken", token, {
-      httpOnly: true,
-      secure: NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    })
-    .status(200)
-    .json({
-      success: true,
-      message: "Logged in successfully",
-      data: user
-    });
+  res.cookie("devtinderToken", token, {
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  });
+
+  sendResponse(res, 200, "Logged in successfully", user);
 });
 
 export const logout = AsyncHandler(async (req, res, next) => {
-  res
-    .clearCookie("devtinderToken", {
-      expires: new Date(Date.now()),
-      httpOnly: true,
-      secure: NODE_ENV === "production"
-    })
-    .status(200)
-    .json({
-      success: true,
-      message: "Logged out successfully"
-    });
+  res.clearCookie("devtinderToken", {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+    secure: NODE_ENV === "production"
+  });
+
+  sendResponse(res, 200, "Logged out successfully");
 });

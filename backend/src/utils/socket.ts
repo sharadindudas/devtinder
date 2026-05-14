@@ -102,7 +102,7 @@ export const initializeSocket = (server: HttpServer) => {
           }
         });
 
-        const populatedMessage = await message.populate("senderId", "name avatarUrl");
+        const populatedMessage = await message.populate("senderId", "name avatar");
 
         io.to(targetUserId).emit("receiveMessage", populatedMessage);
 

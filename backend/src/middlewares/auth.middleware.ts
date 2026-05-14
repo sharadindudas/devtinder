@@ -16,6 +16,8 @@ export const requireAuth = AsyncHandler(async (req, res, next) => {
   const user = await UserModel.findById(decodedPayload._id);
   if (!user) throw new ErrorHandler("User does not exists", 404);
 
+  if (user.isDeleted) throw new ErrorHandler("This account has been deleted", 410);
+
   res.locals.user = user;
   next();
 });
