@@ -1,6 +1,18 @@
-import { createFileRoute, Outlet, useLocation } from "@tanstack/react-router";
+import type { User } from "@/types/common";
+import { createFileRoute, Outlet, redirect, useLocation } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth-layout")({
+  beforeLoad: async ({ context }) => {
+    let user = context.queryClient.getQueryData<User>(["auth"]) ?? null;
+
+    if (!user && context.auth?.authStatus === "PENDING") {
+      user = await context.auth.ensureData();
+    }
+
+    if (user) {
+      throw redirect({ to: user.isOnboarded ? "/feed" : "/onboarding" });
+    }
+  },
   component: RouteComponent
 });
 

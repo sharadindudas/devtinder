@@ -20,3 +20,11 @@ export interface ApiResponse<T = void> {
   message: string;
   data: T;
 }
+
+export type AuthStatus = "PENDING" | "AUTHENTICATED" | "UNAUTHENTICATED";
+
+export interface AuthContextData {
+  user: User | null;
+  authStatus: AuthStatus;
+  ensureData: () => Promise<User | null>;
+}

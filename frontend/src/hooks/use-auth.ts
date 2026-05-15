@@ -1,14 +1,6 @@
 import { authQueryOptions, useAuthQuery } from "@/api/auth/queries";
-import type { User } from "@/types/common";
+import type { AuthContextData, AuthStatus, User } from "@/types/common";
 import { useQueryClient } from "@tanstack/react-query";
-
-export type AuthStatus = "PENDING" | "AUTHENTICATED" | "UNAUTHENTICATED";
-
-export interface AuthContextData {
-  user: User | null;
-  authStatus: AuthStatus;
-  ensureData: () => Promise<User | null>;
-}
 
 export const useAuth = (): AuthContextData => {
   const queryClient = useQueryClient();
