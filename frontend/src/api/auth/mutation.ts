@@ -19,7 +19,7 @@ export const useLoginMutation = () => {
       }
     },
     onError(error) {
-      showApiError(error || "Failed to login");
+      showApiError(error, "Failed to login");
     }
   });
 };

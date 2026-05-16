@@ -1,13 +1,12 @@
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import type { ComponentProps } from "react";
-import type { FieldError } from "react-hook-form";
 
 interface CustomFormField extends ComponentProps<"div"> {
   showLabel?: boolean;
   labelName?: string;
   labelClassName?: string;
-  isError?: FieldError;
+  isError?: boolean;
   errorMessage?: string;
 }
 

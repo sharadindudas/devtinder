@@ -1,10 +1,9 @@
-import { type ComponentProps } from "react";
 import { Input } from "@/components/ui/input";
-import type { FieldError } from "react-hook-form";
 import { cn } from "@/lib/utils";
+import { type ComponentProps } from "react";
 
 interface CustomInputFieldProps extends ComponentProps<typeof Input> {
-  isError?: FieldError;
+  isError?: boolean;
 }
 
 export default function CustomInputField({ isError, className, ...props }: CustomInputFieldProps) {

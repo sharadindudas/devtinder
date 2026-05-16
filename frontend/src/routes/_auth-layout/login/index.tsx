@@ -2,7 +2,7 @@ import { useLoginMutation } from "@/api/auth/mutation";
 import CustomFormField from "@/components/shared/CustomFormField";
 import CustomInputField from "@/components/shared/CustomInputField";
 import { Button } from "@/components/ui/button";
-import { LoginSchema } from "@/schemas/auth";
+import { LoginSchema } from "@/validations/auth";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
@@ -42,20 +42,20 @@ function RouteComponent() {
       className="space-y-6">
       <CustomFormField
         labelName="Email *"
-        isError={errors.email}
+        isError={!!errors.email}
         errorMessage={errors.email?.message}>
         <CustomInputField
           id="email"
           type="email"
           {...register("email")}
           placeholder="Email"
-          isError={errors.email}
+          isError={!!errors.email}
         />
       </CustomFormField>
 
       <CustomFormField
         labelName="Password *"
-        isError={errors.password}
+        isError={!!errors.password}
         errorMessage={errors.password?.message}>
         <div className="relative">
           <CustomInputField
@@ -64,7 +64,7 @@ function RouteComponent() {
             {...register("password")}
             placeholder="Password"
             className="pr-10"
-            isError={errors.password}
+            isError={!!errors.password}
           />
           <button
             type="button"

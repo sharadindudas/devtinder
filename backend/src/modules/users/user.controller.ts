@@ -16,9 +16,13 @@ export const editProfile = AsyncHandler(async (req, res, next) => {
   const updateUserPayload = res.locals.body as EditProfileSchema;
   const userId = res.locals.user._id;
 
-  await UserModel.findByIdAndUpdate(userId, updateUserPayload, { returnDocument: "after", runValidators: true });
+  const updatedUser = await UserModel.findByIdAndUpdate(userId, updateUserPayload, { returnDocument: "after", runValidators: true });
 
-  sendResponse(res, 200, "Updated profile successfully");
+  if (updatedUser) {
+    updatedUser.password = undefined!;
+  }
+
+  sendResponse(res, 200, "Updated profile successfully", updatedUser);
 });
 
 export const changePassword = AsyncHandler(async (req, res, next) => {
