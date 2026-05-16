@@ -1,5 +1,5 @@
 import { authQueryOptions, useAuthQuery } from "@/api/auth/queries";
-import type { AuthContextData, AuthStatus, User } from "@/types/common";
+import type { AuthContextData, AuthStatus } from "@/types/common";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const useAuth = (): AuthContextData => {
@@ -10,8 +10,6 @@ export const useAuth = (): AuthContextData => {
 
   const ensureData = async () => {
     try {
-      const data = queryClient.getQueryData<User>(["auth"]);
-      if (data) return data;
       return await queryClient.fetchQuery(authQueryOptions);
     } catch {
       return null;
