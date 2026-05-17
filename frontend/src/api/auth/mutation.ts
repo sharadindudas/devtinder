@@ -44,13 +44,19 @@ export const useSignupMutation = () => {
 
 export const useLogoutMutation = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return useMutation({
     mutationKey: ["logout-mutation"],
     mutationFn: logoutUser,
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.setQueryData(["auth"], null);
-      queryClient.clear();
+
+      await queryClient.invalidateQueries();
+
+      toast.success("Logout successful");
+
+      navigate({ to: "/login" });
     },
     onError: (error) => {
       showApiError(error, "Failed to logout");

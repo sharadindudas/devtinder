@@ -16,6 +16,10 @@ export const Route = createFileRoute("/_authenticated-layout")({
     if (!user.isOnboarded && location.pathname !== "/onboarding") {
       throw redirect({ to: "/onboarding" });
     }
+
+    if (user.isOnboarded && location.pathname === "/onboarding") {
+      throw redirect({ to: "/feed" });
+    }
   },
   component: RouteComponent
 });

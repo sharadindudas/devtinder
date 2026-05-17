@@ -9,7 +9,11 @@ export const Route = createFileRoute("/")({
       user = await context.auth.ensureData();
     }
 
-    if (user?.isOnboarded) {
+    if (!user) {
+      throw redirect({ to: "/login" });
+    }
+
+    if (user.isOnboarded) {
       throw redirect({ to: "/feed" });
     }
 

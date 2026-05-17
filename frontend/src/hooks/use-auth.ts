@@ -4,9 +4,9 @@ import { useQueryClient } from "@tanstack/react-query";
 
 export const useAuth = (): AuthContextData => {
   const queryClient = useQueryClient();
-  const { data: user, isLoading, isSuccess } = useAuthQuery();
+  const { data: user, isLoading } = useAuthQuery();
 
-  const authStatus: AuthStatus = isLoading ? "PENDING" : isSuccess && user ? "AUTHENTICATED" : "UNAUTHENTICATED";
+  const authStatus: AuthStatus = isLoading ? "PENDING" : user ? "AUTHENTICATED" : "UNAUTHENTICATED";
 
   const ensureData = async () => {
     try {
