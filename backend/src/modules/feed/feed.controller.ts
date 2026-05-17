@@ -17,27 +17,42 @@ export const getFeed = AsyncHandler(async (req, res, next) => {
     myInterests = loggedInUser.interests;
 
   const SWIPES_KEY = `user:${loggedInUser._id}:swipes`;
+  const SWIPED_ON_ME_KEY = `user:${loggedInUser._id}:swipedOnMe`;
   const CONNECTIONS_KEY = `user:${loggedInUser._id}:connections`;
   const BLOCKS_KEY = `user:${loggedInUser._id}:blocks`;
 
   const pipeline = redis.pipeline();
   pipeline.smembers(SWIPES_KEY);
+  pipeline.smembers(SWIPED_ON_ME_KEY);
   pipeline.smembers(CONNECTIONS_KEY);
   pipeline.smembers(BLOCKS_KEY);
 
   const results = (await pipeline.exec()) ?? [];
 
   let swipedUserIds = (results[0]?.[1] as string[]) || [];
-  let connectionUserIds = (results[1]?.[1] as string[]) || [];
-  let blockedUserIds = (results[2]?.[1] as string[]) || [];
+  let swipedOnMeIds = (results[1]?.[1] as string[]) || [];
+  let connectionUserIds = (results[2]?.[1] as string[]) || [];
+  let blockedUserIds = (results[3]?.[1] as string[]) || [];
 
-  if (swipedUserIds.length === 0 && connectionUserIds.length === 0 && blockedUserIds.length === 0) {
-    const [mySwipes, myConnections] = await Promise.all([
-      SwipeModel.find({ userId: loggedInUser._id }).select("targetUserId"),
-      ConnectionModel.find({ $or: [{ user1: loggedInUser._id }, { user2: loggedInUser._id }] }).select("user1 user2 status")
+  const cacheEmpty = swipedUserIds.length === 0 && swipedOnMeIds.length === 0 && connectionUserIds.length === 0 && blockedUserIds.length === 0;
+
+  if (cacheEmpty) {
+    const [allSwipes, myConnections] = await Promise.all([
+      SwipeModel.find({
+        $or: [{ userId: loggedInUser._id }, { targetUserId: loggedInUser._id }]
+      }).select("userId targetUserId"),
+      ConnectionModel.find({
+        $or: [{ user1: loggedInUser._id }, { user2: loggedInUser._id }]
+      }).select("user1 user2 status")
     ]);
 
-    swipedUserIds = mySwipes.map((swipe) => swipe.targetUserId.toString());
+    allSwipes.forEach((swipe) => {
+      if (swipe.userId.toString() === loggedInUser._id.toString()) {
+        swipedUserIds.push(swipe.targetUserId.toString());
+      } else {
+        swipedOnMeIds.push(swipe.userId.toString());
+      }
+    });
 
     myConnections.forEach((connection) => {
       const otherUserId = connection.user1.toString() === loggedInUser._id.toString() ? connection.user2.toString() : connection.user1.toString();
@@ -51,10 +66,12 @@ export const getFeed = AsyncHandler(async (req, res, next) => {
 
     const savePipeline = redis.pipeline();
     if (swipedUserIds.length > 0) savePipeline.sadd(SWIPES_KEY, ...swipedUserIds);
+    if (swipedOnMeIds.length > 0) savePipeline.sadd(SWIPED_ON_ME_KEY, ...swipedOnMeIds);
     if (connectionUserIds.length > 0) savePipeline.sadd(CONNECTIONS_KEY, ...connectionUserIds);
     if (blockedUserIds.length > 0) savePipeline.sadd(BLOCKS_KEY, ...blockedUserIds);
 
     savePipeline.expire(SWIPES_KEY, 86400);
+    savePipeline.expire(SWIPED_ON_ME_KEY, 86400);
     savePipeline.expire(CONNECTIONS_KEY, 86400);
     savePipeline.expire(BLOCKS_KEY, 86400);
 
@@ -63,7 +80,10 @@ export const getFeed = AsyncHandler(async (req, res, next) => {
 
   const excludedUserIds = [
     ...new Map(
-      [loggedInUser._id.toString(), ...swipedUserIds, ...connectionUserIds, ...blockedUserIds].map((id) => [id, new mongoose.Types.ObjectId(id)])
+      [loggedInUser._id.toString(), ...swipedUserIds, ...swipedOnMeIds, ...connectionUserIds, ...blockedUserIds].map((id) => [
+        id,
+        new mongoose.Types.ObjectId(id)
+      ])
     ).values()
   ];
 
@@ -72,21 +92,11 @@ export const getFeed = AsyncHandler(async (req, res, next) => {
     { $project: { password: 0 } },
     {
       $addFields: {
-        skillScore: {
-          $size: { $setIntersection: ["$skills", mySkills] }
-        },
-        interestScore: {
-          $size: { $setIntersection: ["$interests", myInterests] }
-        }
+        skillScore: { $size: { $setIntersection: ["$skills", mySkills] } },
+        interestScore: { $size: { $setIntersection: ["$interests", myInterests] } }
       }
     },
-    {
-      $sort: {
-        skillScore: -1,
-        interestScore: -1,
-        lastSeenAt: -1
-      }
-    },
+    { $sort: { skillScore: -1, interestScore: -1, lastSeenAt: -1 } },
     { $skip: (pageNumber - 1) * limitNumber },
     { $limit: limitNumber }
   ]);

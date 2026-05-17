@@ -1,4 +1,4 @@
-import { useLoginMutation } from "@/api/auth/mutation";
+import { useLoginMutation } from "@/api/auth/mutations";
 import CustomFormField from "@/components/shared/CustomFormField";
 import CustomInputField from "@/components/shared/CustomInputField";
 import { Button } from "@/components/ui/button";

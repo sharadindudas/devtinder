@@ -50,9 +50,7 @@ export const useLogoutMutation = () => {
     mutationKey: ["logout-mutation"],
     mutationFn: logoutUser,
     onSuccess: async () => {
-      queryClient.setQueryData(["auth"], null);
-
-      await queryClient.invalidateQueries();
+      queryClient.clear();
 
       toast.success("Logout successful");
 
