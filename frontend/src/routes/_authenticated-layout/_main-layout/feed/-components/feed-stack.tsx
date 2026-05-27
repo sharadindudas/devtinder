@@ -6,10 +6,11 @@ import { useEffect, useRef, useState } from "react";
 import SwipeCard from "./swipe-card";
 
 export default function FeedStack() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useFeedQuery();
-  const { mutate: swipe } = useSwipeMutation();
   const [cards, setCards] = useState<FeedUser[]>([]);
   const seenIds = useRef(new Set<string>());
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useFeedQuery();
+  const { mutate: swipe } = useSwipeMutation();
 
   useEffect(() => {
     if (!data) return;

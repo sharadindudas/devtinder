@@ -24,7 +24,7 @@ export default function IdentityStep() {
         <CustomTextarea
           id="bio"
           placeholder="I'm a full-stack dev who loves building dev tools..."
-          isError={errors.bio}
+          isError={!!errors.bio}
           {...register("bio")}
         />
       </CustomFormField>

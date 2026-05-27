@@ -9,6 +9,7 @@ import TechStackStep from "./-components/tech-stack-step";
 import { STEP_FIELDS } from "@/data/onboarding";
 import InterestsStep from "./-components/interests-step";
 import { useUpdateProfileMutation } from "@/api/user/mutation";
+import ProgressStatus from "./-components/progress-status";
 
 export const Route = createFileRoute("/_authenticated-layout/onboarding/")({
   component: RouteComponent
@@ -23,7 +24,6 @@ function RouteComponent() {
     resolver: valibotResolver(OnboardingSchema),
     defaultValues: {
       bio: "",
-      avatar: "",
       github: "",
       experienceLevel: "beginner",
       skills: [],
@@ -41,9 +41,8 @@ function RouteComponent() {
   const onSubmit = (data: OnboardingSchema) => {
     updateProfile({
       ...data,
-      bio: data.bio ?? "",
-      avatar: data.avatar ?? "",
-      github: data.github ?? "",
+      bio: data.bio,
+      github: data.github,
       isOnboarded: true
     });
   };
@@ -51,14 +50,7 @@ function RouteComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="max-w-xl w-full space-y-8">
-        <div className="flex gap-2">
-          {[1, 2, 3].map((s) => (
-            <div
-              key={s}
-              className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${s <= currentStep ? "bg-primary" : "bg-muted"}`}
-            />
-          ))}
-        </div>
+        <ProgressStatus currentStep={currentStep} />
 
         <div>
           <h1 className="text-3xl font-bold">Complete your profile</h1>

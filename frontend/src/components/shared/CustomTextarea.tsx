@@ -1,10 +1,9 @@
-import { type ComponentProps } from "react";
 import { Textarea } from "@/components/ui/textarea";
-import type { FieldError } from "react-hook-form";
 import { cn } from "@/lib/utils";
+import { type ComponentProps } from "react";
 
 interface CustomTextareaProps extends ComponentProps<typeof Textarea> {
-  isError?: FieldError;
+  isError?: boolean;
 }
 
 export default function CustomTextarea({ isError, className, ...props }: CustomTextareaProps) {
