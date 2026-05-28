@@ -5,6 +5,7 @@ interface Connection extends Document {
   user2: Types.ObjectId;
   status: "accepted" | "blocked";
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const connectionSchema: Schema<Connection> = new Schema(
@@ -28,7 +29,7 @@ const connectionSchema: Schema<Connection> = new Schema(
       required: true
     }
   },
-  { timestamps: { updatedAt: false }, versionKey: false }
+  { timestamps: true, versionKey: false }
 );
 
 connectionSchema.index({ user1: 1, user2: 1 }, { unique: true });
