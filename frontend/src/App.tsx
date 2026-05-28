@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { Routes, Route } from "react-router";
 
@@ -7,6 +7,8 @@ import Header from "./components/Common/Header";
 import Loader from "./components/Common/Loader";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
 import PublicRoute from "./components/Routes/PublicRoute";
+import { useGlobalStore } from "./store/useStore";
+import { axiosInstance } from "./utils/axiosInstance";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -19,6 +21,30 @@ const Chat = lazy(() => import("./pages/Chat"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const App = () => {
+  const { addUser, setAuthChecking, isAuthChecking } = useGlobalStore();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        // Replace this URL with your actual endpoint that returns the logged-in user's profile
+        const res = await axiosInstance.get("/profile/view");
+        addUser(res.data.data);
+      } catch (error) {
+        // If it fails (e.g. 401 Unauthorized), the cookie is missing or invalid
+        console.log("Not logged in");
+      } finally {
+        // Done checking, safe to render the app
+        setAuthChecking(false);
+      }
+    };
+
+    checkAuth();
+  }, [addUser, setAuthChecking]);
+
+  if (isAuthChecking) {
+    return <Loader />;
+  }
+
   return (
     <>
       <Header />
@@ -101,3 +127,4 @@ const App = () => {
 };
 
 export default App;
+

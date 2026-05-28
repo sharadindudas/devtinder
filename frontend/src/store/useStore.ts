@@ -5,6 +5,7 @@ import type { Connection, Message, Request, User } from "../@types/types";
 
 interface GlobalState {
   user: User | null;
+  isAuthChecking: boolean;
   feed: User[];
   requests: Request[];
   connections: Connection[];
@@ -12,6 +13,7 @@ interface GlobalState {
 
   addUser: (userData: User) => void;
   clearUser: () => void;
+  setAuthChecking: (status: boolean) => void;
 
   addFeed: (feedData: User[]) => void;
   updateFeed: (userId: string) => void;
@@ -35,6 +37,7 @@ export const useGlobalStore = create<GlobalState>()(
       (set) => ({
         // States
         user: null,
+        isAuthChecking: true,
         feed: [],
         requests: [],
         connections: [],
@@ -44,7 +47,9 @@ export const useGlobalStore = create<GlobalState>()(
         addUser: (userData: User) => set({ user: userData }),
         clearUser: () => {
           set({ user: null });
-          localStorage.removeItem("devtinder_userInfo");
+        },
+        setAuthChecking: (status: boolean) => {
+          set({ isAuthChecking: status });
         },
 
         addFeed: (feedData: User[]) => set({ feed: feedData }),
@@ -71,3 +76,4 @@ export const useGlobalStore = create<GlobalState>()(
     )
   )
 );
+
