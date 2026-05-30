@@ -7,8 +7,6 @@ import { ChangePasswordSchema, EditProfileSchema } from "./user.validator";
 export const viewProfile = AsyncHandler(async (req, res, next) => {
   const loggedInUser = res.locals.user;
 
-  loggedInUser.password = undefined!;
-
   sendResponse(res, 200, "Fetched user profile successfully", loggedInUser);
 });
 
@@ -18,9 +16,7 @@ export const editProfile = AsyncHandler(async (req, res, next) => {
 
   const updatedUser = await UserModel.findByIdAndUpdate(userId, updateUserPayload, { returnDocument: "after", runValidators: true });
 
-  if (updatedUser) {
-    updatedUser.password = undefined!;
-  }
+  if (!updatedUser) throw new ErrorHandler("User not found", 404);
 
   sendResponse(res, 200, "Updated profile successfully", updatedUser);
 });
@@ -36,7 +32,7 @@ export const changePassword = AsyncHandler(async (req, res, next) => {
   }
 
   user.password = newPassword;
-  await user.save({ validateBeforeSave: false });
+  await user.save({ validateModifiedOnly: true });
 
   sendResponse(res, 200, "Updated password successfully");
 });

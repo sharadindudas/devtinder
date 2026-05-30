@@ -80,7 +80,16 @@ const userSchema: Schema<User> = new Schema(
     isDeleted: { type: Boolean, default: false },
     deletedAt: { type: Date }
   },
-  { timestamps: true, versionKey: false }
+  {
+    toJSON: {
+      transform: (_, ret) => {
+        const { password, ...rest } = ret;
+        return rest;
+      }
+    },
+    timestamps: true,
+    versionKey: false
+  }
 );
 
 userSchema.pre("save", async function () {

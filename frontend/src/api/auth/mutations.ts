@@ -33,7 +33,7 @@ export const useSignupMutation = () => {
     onSuccess: (data) => {
       if (data.success) {
         toast.success(data.message || "Signup successful");
-        navigate({ to: "/login" });
+        navigate({ to: "/onboarding" });
       }
     },
     onError: (error) => {
