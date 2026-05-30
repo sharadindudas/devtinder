@@ -7,6 +7,7 @@ import { LoginSchema, SignupSchema } from "./auth.validator";
 const cookieOptions = {
   httpOnly: true,
   secure: NODE_ENV === "production",
+  sameSite: "strict" as const,
   maxAge: 7 * 24 * 60 * 60 * 1000
 };
 
@@ -35,16 +36,19 @@ export const login = AsyncHandler(async (req, res, next) => {
   const { email, password } = res.locals.body as LoginSchema;
 
   const user = await UserModel.findOne({ email });
+
   if (!user) {
-    throw new ErrorHandler("User does not exist", 404);
+    throw new ErrorHandler("Invalid Credentials", 401);
   }
 
   const isValidPassword = await user.validatePassword(password);
+
   if (!isValidPassword) {
     throw new ErrorHandler("Invalid Credentials", 401);
   }
 
   user.lastSeenAt = new Date();
+
   await user.save({ validateModifiedOnly: true });
 
   const token = user.generateJWT();
