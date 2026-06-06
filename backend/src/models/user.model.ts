@@ -7,7 +7,9 @@ export interface User extends Document {
   _id: Types.ObjectId;
   name: string;
   email: string;
-  password: string;
+  password?: string;
+  authProvider: "local" | "google" | "github";
+  providerId?: string;
   isOnboarded: boolean;
   bio?: string;
   avatar: string;
@@ -39,8 +41,18 @@ const userSchema: Schema<User> = new Schema(
       lowercase: true
     },
     password: {
+      type: String
+    },
+    authProvider: {
       type: String,
-      required: true
+      enum: {
+        values: ["local", "google", "github"],
+        message: `{VALUE} is not a valid auth provider`
+      },
+      default: "local"
+    },
+    providerId: {
+      type: String
     },
     isOnboarded: {
       type: Boolean,
@@ -93,12 +105,13 @@ const userSchema: Schema<User> = new Schema(
 );
 
 userSchema.pre("save", async function () {
-  if (this.isModified("password")) {
+  if (this.isModified("password") && this.password) {
     this.password = await bcrypt.hash(this.password, 10);
   }
 });
 
 userSchema.methods.validatePassword = async function (password: string) {
+  if (!this.password) return false;
   return await bcrypt.compare(password, this.password);
 };
 
