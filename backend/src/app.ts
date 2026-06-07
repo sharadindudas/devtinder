@@ -4,7 +4,7 @@ import cors from "cors";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import { FRONTEND_URL } from "./config/config";
+import { FRONTEND_URL, FRONTEND_URL_PREV } from "./config/config";
 import { errorMiddleware } from "./middlewares/error.middleware";
 import { morganMiddleware } from "./middlewares/morgan.middleware";
 import { notfoundMiddleware } from "./middlewares/notfound.middleware";
@@ -20,7 +20,13 @@ const app = express();
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(helmet());
-app.use(cors({ origin: FRONTEND_URL, credentials: true, methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"] }));
+app.use(
+  cors({
+    origin: [FRONTEND_URL, FRONTEND_URL_PREV, "http://localhost:5173"],
+    credentials: true,
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"]
+  })
+);
 app.use(cookieParser());
 app.use(compression());
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 10000, message: "Too many requests from this IP, please try again later" }));
