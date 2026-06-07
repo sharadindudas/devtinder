@@ -13,3 +13,8 @@ export const LoginSchema = v.object({
   password: passwordSchema
 });
 export type LoginSchema = v.InferOutput<typeof LoginSchema>;
+
+export const VerifyGoogleSchema = v.object({
+  code: v.pipe(v.string(), v.trim(), v.nonEmpty("Please provide the authorization code"))
+});
+export type VerifyGoogleSchema = v.InferOutput<typeof VerifyGoogleSchema>;

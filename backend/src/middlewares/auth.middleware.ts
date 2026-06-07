@@ -5,13 +5,13 @@ import type { JwtUserPayload } from "../types/express";
 import { AsyncHandler, ErrorHandler } from "../utils/handlers";
 
 export const requireAuth = AsyncHandler(async (req, res, next) => {
-  const { devtinderToken } = req.cookies;
+  const { devtinder_token } = req.cookies;
 
-  if (!devtinderToken) {
+  if (!devtinder_token) {
     throw new ErrorHandler("Please login to continue", 401);
   }
 
-  const decodedPayload = jwt.verify(devtinderToken, JWT_SECRET) as JwtUserPayload;
+  const decodedPayload = jwt.verify(devtinder_token, JWT_SECRET) as JwtUserPayload;
 
   const user = await UserModel.findById(decodedPayload._id);
   if (!user) throw new ErrorHandler("User does not exists", 404);

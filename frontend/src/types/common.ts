@@ -4,6 +4,7 @@ export interface User {
   email: string;
   password: string;
   isOnboarded: boolean;
+  isNewUser: boolean;
   bio: string;
   avatar: string;
   github?: string;

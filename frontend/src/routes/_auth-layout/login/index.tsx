@@ -8,6 +8,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import GoogleLoginButton from "../-components/google-login-button";
 
 export const Route = createFileRoute("/_auth-layout/login/")({
   component: RouteComponent
@@ -82,6 +83,14 @@ function RouteComponent() {
           className="w-full h-12 text-sm font-semibold rounded-md">
           Login
         </Button>
+
+        <div className="relative flex items-center gap-3">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-xs text-muted-foreground">or</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
+
+        <GoogleLoginButton login />
 
         <p className="text-center text-sm text-muted-foreground">
           Not Registered Yet?{" "}

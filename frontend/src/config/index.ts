@@ -5,3 +5,4 @@ function requireEnv(key: string): string {
 }
 
 export const API_URL = requireEnv("VITE_API_URL");
+export const GOOGLE_CLIENT_ID = requireEnv("VITE_GOOGLE_CLIENT_ID");

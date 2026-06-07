@@ -29,7 +29,7 @@ export const initializeSocket = (server: HttpServer) => {
         })
       );
 
-      const token = parsedCookies.devtinderToken;
+      const token = parsedCookies.devtinder_token;
       if (!token) return next(new Error("Token missing"));
 
       const decodedPayload = jwt.verify(token, JWT_SECRET) as JwtUserPayload;

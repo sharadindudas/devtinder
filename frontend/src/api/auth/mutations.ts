@@ -1,6 +1,6 @@
 import { showApiError } from "@/utils/common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { loginUser, logoutUser, signupUser } from ".";
+import { loginUser, logoutUser, signupUser, verifyGoogleToken } from ".";
 import toast from "react-hot-toast";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -58,6 +58,27 @@ export const useLogoutMutation = () => {
     },
     onError: (error) => {
       showApiError(error, "Failed to logout");
+    }
+  });
+};
+
+export const useGoogleLoginMutation = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationKey: ["google-login-mutation"],
+    mutationFn: verifyGoogleToken,
+    onSuccess: (data) => {
+      console.log(data);
+      if (data.success) {
+        queryClient.setQueryData(["auth"], data.data);
+        toast.success(data.message || "Login successful");
+        navigate({ to: data.data.isNewUser ? "/onboarding" : "/feed" });
+      }
+    },
+    onError: (error) => {
+      showApiError(error, "Google login failed");
     }
   });
 };

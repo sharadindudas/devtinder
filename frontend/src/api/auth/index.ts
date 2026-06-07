@@ -18,3 +18,7 @@ export const signupUser = (payload: SignupPayload) => {
 export const logoutUser = async (): Promise<void> => {
   await apiClient.post("auth/logout").json();
 };
+
+export const verifyGoogleToken = (authCode: string) => {
+  return apiClient.post("auth/google/verify", { json: { code: authCode } }).json<ApiResponse<User>>();
+};

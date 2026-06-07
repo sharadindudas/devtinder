@@ -42,7 +42,7 @@ export const deleteAccount = AsyncHandler(async (req, res, next) => {
 
   await UserModel.findByIdAndUpdate(user._id, { isDeleted: true, deletedAt: new Date() });
 
-  res.clearCookie("devtinderToken", {
+  res.clearCookie("devtinder_token", {
     expires: new Date(Date.now()),
     httpOnly: true,
     secure: NODE_ENV === "production"
