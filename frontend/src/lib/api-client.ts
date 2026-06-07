@@ -2,7 +2,7 @@ import { API_URL } from "@/config";
 import ky, { isHTTPError } from "ky";
 
 export const apiClient = ky.create({
-  prefix: API_URL,
+  prefix: API_URL + "/api/v1",
   credentials: "include",
   headers: {
     "Content-Type": "application/json"
