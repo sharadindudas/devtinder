@@ -70,7 +70,6 @@ export const useGoogleLoginMutation = () => {
     mutationKey: ["google-login-mutation"],
     mutationFn: verifyGoogleToken,
     onSuccess: (data) => {
-      console.log(data);
       if (data.success) {
         queryClient.setQueryData(["auth"], data.data);
         toast.success(data.message || "Login successful");

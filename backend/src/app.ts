@@ -4,17 +4,17 @@ import cors from "cors";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import { FRONTEND_URL, FRONTEND_URL_PREV } from "./config/config";
+import { FRONTEND_URL } from "./config/config";
 import { errorMiddleware } from "./middlewares/error.middleware";
 import { morganMiddleware } from "./middlewares/morgan.middleware";
 import { notfoundMiddleware } from "./middlewares/notfound.middleware";
 import authRouter from "./modules/auth/auth.routes";
+import connectionRouter from "./modules/connections/connection.route";
+import conversationRouter from "./modules/conversations/conversation.routes";
+import feedRouter from "./modules/feed/feed.routes";
 import healthRouter from "./modules/health/health.routes";
 import swipeRouter from "./modules/swipes/swipe.routes";
 import userRouter from "./modules/users/user.routes";
-import feedRouter from "./modules/feed/feed.routes";
-import connectionRouter from "./modules/connections/connection.route";
-import conversationRouter from "./modules/conversations/conversation.routes";
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(helmet());
 app.use(
   cors({
-    origin: [FRONTEND_URL, FRONTEND_URL_PREV],
+    origin: FRONTEND_URL,
     credentials: true,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"]
   })
