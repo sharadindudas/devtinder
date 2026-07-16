@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AsyncHandler } from "../utils/handlers";
 import { ApiResponse } from "../@types/types";
-import { RequestModel } from "../models/request.model";
+import { ConnectionRequestModel } from "../models/request.model";
 import { UserModel } from "../models/user.model";
 import { PaginationSchema } from "../validations/common.schema";
 
@@ -10,7 +10,7 @@ const USER_SAFE_DATA = "name gender age photoUrl about skills";
 const connectionRequestsReceived = AsyncHandler(async (req, res: Response<ApiResponse>) => {
   const loggedInUser = req.user;
 
-  const allRequestsReceived = await RequestModel.find({
+  const allRequestsReceived = await ConnectionRequestModel.find({
     receiverId: loggedInUser._id,
     status: "interested"
   })
@@ -27,7 +27,7 @@ const connectionRequestsReceived = AsyncHandler(async (req, res: Response<ApiRes
 const allConnections = AsyncHandler(async (req, res: Response<ApiResponse>) => {
   const loggedInUser = req.user;
 
-  const allConnections = await RequestModel.find({
+  const allConnections = await ConnectionRequestModel.find({
     $or: [
       { senderId: loggedInUser._id, status: "accepted" },
       { receiverId: loggedInUser._id, status: "accepted" }
@@ -58,7 +58,7 @@ const userFeed = AsyncHandler(async (req: Request, res: Response<ApiResponse>) =
   const { page, limit } = await PaginationSchema.validate(req.query, { abortEarly: false, stripUnknown: true });
   const skip = (page - 1) * limit;
 
-  const allConnectedUsers = await RequestModel.find({
+  const allConnectedUsers = await ConnectionRequestModel.find({
     $or: [{ senderId: loggedInUser._id }, { receiverId: loggedInUser._id }]
   });
 

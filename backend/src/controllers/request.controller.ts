@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { AsyncHandler, ErrorHandler } from "../utils/handlers";
 import { ApiResponse } from "../@types/types";
-import { RequestModel } from "../models/request.model";
+import { ConnectionRequestModel } from "../models/request.model";
 import { UserModel } from "../models/user.model";
 import {
   ReviewConnectionRequestSchema,
@@ -27,7 +27,7 @@ const sendConnectionRequest = AsyncHandler(async (req, res: Response<ApiResponse
     throw new ErrorHandler("You can't send connection request to yourself", 409);
   }
 
-  const connectionRequestExists = await RequestModel.findOne({
+  const connectionRequestExists = await ConnectionRequestModel.findOne({
     $or: [
       { senderId, receiverId },
       { senderId: receiverId, receiverId: senderId }
@@ -37,7 +37,7 @@ const sendConnectionRequest = AsyncHandler(async (req, res: Response<ApiResponse
     throw new ErrorHandler("Connection request already exists", 409);
   }
 
-  const newConnectionRequest = await RequestModel.create({
+  const newConnectionRequest = await ConnectionRequestModel.create({
     senderId,
     receiverId,
     status
@@ -63,7 +63,7 @@ const reviewConnectionRequest = AsyncHandler(async (req, res: Response<ApiRespon
     stripUnknown: true
   });
 
-  const connectionRequestExists = await RequestModel.findOne({
+  const connectionRequestExists = await ConnectionRequestModel.findOne({
     _id: requestId,
     receiverId,
     status: "interested"

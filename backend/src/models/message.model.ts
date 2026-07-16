@@ -1,4 +1,4 @@
-import { Document, Types, Schema, models, model } from "mongoose";
+import { Document, Types, Schema, model } from "mongoose";
 import { User } from "./user.model";
 import { Chat } from "./chat.model";
 
@@ -34,4 +34,4 @@ const messageSchema: Schema<Message> = new Schema(
 
 messageSchema.index({ chatId: 1, createdAt: -1 });
 
-export const MessageModel = models.Message || model<Message>("Message", messageSchema);
+export const MessageModel = model<Message>("Message", messageSchema);

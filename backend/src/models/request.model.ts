@@ -1,14 +1,14 @@
 import { Document, Schema, Types, model } from "mongoose";
 import { User } from "./user.model";
 
-interface Request extends Document {
+interface ConnectionRequest extends Document {
   _id: Types.ObjectId;
   senderId: User;
   receiverId: User;
   status: string;
 }
 
-const requestSchema: Schema<Request> = new Schema(
+const connectionRequestSchema: Schema<ConnectionRequest> = new Schema(
   {
     senderId: {
       type: Schema.Types.ObjectId,
@@ -33,6 +33,6 @@ const requestSchema: Schema<Request> = new Schema(
   { timestamps: true, versionKey: false }
 );
 
-requestSchema.index({ senderId: 1, receiverId: 1 }, { unique: true });
+connectionRequestSchema.index({ senderId: 1, receiverId: 1 }, { unique: true });
 
-export const RequestModel = model<Request>("Request", requestSchema);
+export const ConnectionRequestModel = model<ConnectionRequest>("ConnectionRequest", connectionRequestSchema);

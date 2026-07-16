@@ -1,4 +1,4 @@
-import { Document, Types, Schema, models, model } from "mongoose";
+import { Document, Types, Schema, model } from "mongoose";
 import { User } from "./user.model";
 
 export interface Chat extends Document {
@@ -25,4 +25,4 @@ const chatSchema: Schema<Chat> = new Schema(
   { timestamps: true, versionKey: false }
 );
 
-export const ChatModel = models.Chat || model<Chat>("Chat", chatSchema);
+export const ChatModel = model<Chat>("Chat", chatSchema);
