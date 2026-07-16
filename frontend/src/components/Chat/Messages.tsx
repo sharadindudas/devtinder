@@ -21,10 +21,10 @@ const Messages = () => {
           <p className="text-center">Send a message to start the conversation 🔥</p>
         </div>
       ) : (
-        messages?.map((message) => (
+        messages?.map((message, index) => (
           <div
             key={message._id}
-            ref={lastMessageRef}>
+            ref={index === messages.length - 1 ? lastMessageRef : null}>
             <ChatMessage message={message} />
           </div>
         ))

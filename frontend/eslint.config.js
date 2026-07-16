@@ -135,13 +135,13 @@ export default [
         "error",
         {
           trailingComma: "none",
-          tabWidth: 4,
+          tabWidth: 2,
           semi: true,
           singleQuote: false,
           bracketSameLine: true,
           printWidth: 150,
           singleAttributePerLine: true,
-          endOfLine: "crlf"
+          endOfLine: "lf"
         }
       ]
     }

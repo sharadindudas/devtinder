@@ -2,33 +2,56 @@
 
 ## 🔥 Overview
 
-DevTinder is a **developer networking platform** where tech enthusiasts can **connect, chat, and collaborate** based on mutual interest. Inspired by Tinder, it lets users **swipe left to ignore and right to connect**, with real-time chat features powered by **Socket.io**.
+DevTinder is a **developer networking platform** where tech enthusiasts can **connect, chat, and collaborate** based on mutual interest. Inspired by Tinder, it lets users **swipe left to ignore and right to connect**, with real-time chat powered by **Socket.io**.
 
-🚀 **Live Demo**: [https://devtinder-remo.vercel.app](https://devtinder-remo.vercel.app)  
+🌐 **Live Demo**: [https://devtinder-remo.vercel.app](https://devtinder-remo.vercel.app)
 📌 **GitHub Repository**: [DevTinder Repo](https://github.com/sharadindudas/devtinder)
 
 ## ✨ Features
 
-✅ **JWT & Cookie-based Authentication** – Secure login and signup.  
-✅ **Swipeable Feed** – Browse developer profiles and swipe to connect.  
-✅ **Connection Requests** – Accept/reject connection requests easily.  
-✅ **Real-time Chat** – Powered by **Socket.io** with notification sounds.  
-✅ **Profile Management** – Edit and update your profile details.
+- ✅ **JWT + httpOnly Cookie Authentication** – Secure signup, login and logout.
+- ✅ **Swipeable Feed** – Browse developer profiles and swipe to connect (paginated).
+- ✅ **Connection Requests** – Send interest, accept or reject incoming requests.
+- ✅ **Real-time Chat** – Socket.io messaging (authenticated) with notification sounds.
+- ✅ **Profile Management** – Edit your profile, skills and photo; change your password.
+- ✅ **Hardened Backend** – Helmet, CORS, rate limiting, request validation and structured logging.
 
 ## 🛠 Tech Stack
 
-**Frontend:** React.js, TypeScript, Zustand, Tailwind CSS, DaisyUi  
-**Backend:** Node.js, Express.js, MongoDB, TypeScript, Socket.io  
-**Authentication:** JWT & Cookies
+**Frontend:** React 18, TypeScript, Vite, Zustand, React Router, React Hook Form + Yup, Axios, Tailwind CSS + DaisyUI, Socket.io Client, `react-tinder-card`, `react-hot-toast`
+
+**Backend:** Node.js, Express 5, TypeScript, MongoDB + Mongoose, Socket.io, JWT, bcrypt, Yup, Helmet, `express-rate-limit`, Morgan + Winston
+
+**Tooling:** Bun (package manager), ESLint, Prettier
 
 ## 📂 Project Structure
 
 ```bash
 devtinder/
-│── frontend/    # Frontend (React, TypeScript, Zustand, Tailwind CSS, DaisyUi)
-│── backend/     # Backend (Node.js, Express, MongoDB, TypeScript, Socket.io)
-│── README.md    # Documentation
+├── backend/                # Express + Socket.io API (TypeScript)
+│   └── src/
+│       ├── config/         # env + MongoDB connection
+│       ├── controllers/    # auth, profile, user, request, chat
+│       ├── middlewares/    # auth, error, rate limit, logging, 404
+│       ├── models/         # User, ConnectionRequest, Chat, Message
+│       ├── routes/         # /api/v1 route definitions
+│       ├── utils/          # socket, handlers, logger
+│       └── validations/    # Yup schemas
+├── frontend/               # React + Vite SPA (TypeScript)
+│   └── src/
+│       ├── components/     # UI components
+│       ├── hooks/          # data-fetching / action hooks
+│       ├── pages/          # route pages
+│       ├── store/          # Zustand global store
+│       ├── schemas/        # Yup form schemas
+│       └── utils/          # axios instance, helpers
+└── README.md
 ```
+
+## 📋 Prerequisites
+
+- [**Bun**](https://bun.sh) (recommended – the repo ships a `bun.lock`) or Node.js 18+ with npm
+- A **MongoDB** database (local instance or [MongoDB Atlas](https://www.mongodb.com/atlas))
 
 ## 🏗️ Setup & Installation
 
@@ -39,47 +62,128 @@ git clone https://github.com/sharadindudas/devtinder.git
 cd devtinder
 ```
 
-### 2️⃣ Install dependencies
+### 2️⃣ Configure environment variables
 
-#### Frontend
+Copy the sample files and fill in your values:
 
 ```bash
-cd frontend
-npm install
-npm run dev
+cp backend/.env.sample backend/.env
+cp frontend/.env.sample frontend/.env
 ```
 
-#### Backend
+**Backend (`backend/.env`)**
+
+| Variable       | Description                                              | Example                     |
+| -------------- | -------------------------------------------------------- | --------------------------- |
+| `PORT`         | Port the API listens on                                  | `6565`                      |
+| `NODE_ENV`     | `development` or `production` (controls cookie security) | `development`               |
+| `SERVER_URL`   | Public URL of the API (used in logs)                     | `http://localhost:6565`     |
+| `MONGODB_URL`  | MongoDB connection string (db name `devtinder`)          | `mongodb://localhost:27017` |
+| `JWT_SECRET`   | Secret used to sign JWTs                                 | `a_long_random_secret`      |
+| `FRONTEND_URL` | Allowed CORS origin (the frontend URL)                   | `http://localhost:5173`     |
+
+**Frontend (`frontend/.env`)**
+
+| Variable           | Description                                                              | Example                 |
+| ------------------ | ------------------------------------------------------------------------ | ----------------------- |
+| `VITE_BACKEND_URL` | Backend origin (REST calls append `/api/v1`; Socket.io uses it directly) | `http://localhost:6565` |
+
+> In development (`NODE_ENV` unset or `development`) auth cookies use `SameSite=Lax` + non-secure so they work over `http://localhost`. In production they switch to `SameSite=None` + `Secure`.
+
+### 3️⃣ Install dependencies & run
+
+**Backend**
 
 ```bash
 cd backend
-npm install
-npm run dev
+bun install
+bun run dev        # ts-node-dev with hot reload
 ```
 
-### 3️⃣ Setup environment variables
+**Frontend** (in a second terminal)
 
--   Create a `.env` file in both **frontend** and **backend** folders.
--   Add necessary environment variables as per the `.env.example`.
+```bash
+cd frontend
+bun install
+bun run dev        # Vite dev server on http://localhost:5173
+```
 
-## 🚀 Contributing
+> Using npm instead of Bun? `npm install && npm run dev` works too, but Bun is the committed lockfile.
 
-Contributions are welcome! Feel free to fork the repository and submit pull requests.
+## 📜 Available Scripts
+
+**Backend**
+
+| Script             | Description                       |
+| ------------------ | --------------------------------- |
+| `bun run dev`      | Start the API in watch mode       |
+| `bun run build`    | Compile TypeScript to `dist/`     |
+| `bun run start`    | Run the compiled server (`dist/`) |
+| `bun run lint:fix` | Lint and auto-fix                 |
+| `bun run format`   | Format with Prettier              |
+
+**Frontend**
+
+| Script            | Description                         |
+| ----------------- | ----------------------------------- |
+| `bun run dev`     | Start the Vite dev server           |
+| `bun run build`   | Type-check and build for production |
+| `bun run preview` | Preview the production build        |
+| `bun run lint`    | Lint the project                    |
+| `bun run format`  | Format with Prettier                |
+
+## 📡 API Reference
+
+Base URL: `/api/v1` — protected routes require the `devtinderToken` httpOnly cookie.
+
+| Method | Endpoint                             | Auth | Description                              |
+| ------ | ------------------------------------ | :--: | ---------------------------------------- |
+| GET    | `/health`                            |  –   | Health check                             |
+| POST   | `/auth/signup`                       |  –   | Register a new user                      |
+| POST   | `/auth/login`                        |  –   | Log in (sets the auth cookie)            |
+| POST   | `/auth/logout`                       |  –   | Log out (clears the cookie)              |
+| GET    | `/profile/view`                      |  ✅  | Get the logged-in user's profile         |
+| PATCH  | `/profile/edit`                      |  ✅  | Update profile details                   |
+| PUT    | `/profile/password`                  |  ✅  | Change password                          |
+| GET    | `/user/feed`                         |  ✅  | Paginated feed of users to swipe         |
+| GET    | `/user/requests/received`            |  ✅  | Incoming connection requests             |
+| GET    | `/user/connections`                  |  ✅  | Accepted connections                     |
+| POST   | `/request/send/:status/:userId`      |  ✅  | Send request (`interested` / `ignored`)  |
+| POST   | `/request/review/:status/:requestId` |  ✅  | Review request (`accepted` / `rejected`) |
+| GET    | `/chat/:userId`                      |  ✅  | Paginated message history with a user    |
+
+**Socket.io events** (handshake authenticated via the auth cookie):
+
+| Event             | Direction       | Payload                   | Description                        |
+| ----------------- | --------------- | ------------------------- | ---------------------------------- |
+| `joinChat`        | client → server | `{ receiverId }`          | Join a chat room with a connection |
+| `sendMessage`     | client → server | `{ message, receiverId }` | Send a message to a connection     |
+| `messageReceived` | server → client | message object            | New message broadcast to the room  |
+| `error`           | server → client | string                    | Auth / validation error            |
+
+## 🧩 Data Models
+
+- **User** – name, email (unique), password (hashed), age, gender, about, skills, photoUrl
+- **ConnectionRequest** – `senderId`, `receiverId`, `status` (`interested` / `ignored` / `accepted` / `rejected`)
+- **Chat** – `roomId` (unique), `participants`
+- **Message** – `chatId` (indexed), `senderId`, `message` — stored in its own collection for scalable, paginated history
 
 ## 🧠 Upcoming Features (Planned)
 
-🚧 **Online/Offline Status** – Show when a user is online or last seen.  
-💬 **Typing Indicator** – Show when the other user is typing (WhatsApp-style).  
-📎 **File Attachments in Chat** – Send and receive images, PDFs, or code snippets.  
-🎨 **UI/UX Improvements** – Make the interface sleeker and more interactive.  
-🎯 **Daily Match Suggestions** – Algorithmic suggestions based on mutual interests or languages.  
-📊 **Activity Stats** – Track profile views, swipe counts, and connection stats.  
-🛡️ **Reporting & Blocking** – Allow users to report/block inappropriate behavior.  
-🔔 **Push Notifications** – Real-time browser/mobile alerts for messages and connection requests.  
-📱 **Mobile Responsiveness / PWA** – Make it usable on mobile or even installable as an app.  
-💥 **Unit & Integration Tests** – Improve stability and reliability for production use.
+- 🚧 **Online/Offline Status** – Show when a user is online or last seen.
+- 💬 **Typing Indicator** – Show when the other user is typing.
+- 📎 **File Attachments in Chat** – Send images, PDFs or code snippets.
+- 🎯 **Personalized Recommendation Feed** – Rank the feed by relevance using skills, interests, experience, "looking for" and location instead of a plain listing.
+- 🛡️ **Reporting & Blocking** – Report or block inappropriate behavior.
+- 🔔 **Push Notifications** – Real-time alerts for messages and requests.
+- 📱 **Mobile Responsiveness / PWA** – Installable, mobile-friendly experience.
+- 💥 **Unit & Integration Tests** – Improve stability and reliability.
+
+## 🤝 Contributing
+
+Contributions are welcome! Fork the repository, create a feature branch, and open a pull request. Please run `bun run lint:fix` and `bun run format` before submitting.
 
 ## 📫 Contact
 
-👨‍💻 **Author:** [Sharadindu Das](https://github.com/sharadindudas)  
+👨‍💻 **Author:** [Sharadindu Das](https://github.com/sharadindudas)
 📧 **Email:** sharadindudas774@gmail.com

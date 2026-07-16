@@ -7,12 +7,9 @@ import { PaginationSchema } from "../validations/common.schema";
 
 const USER_SAFE_DATA = "name gender age photoUrl about skills";
 
-// Connection request received
 const connectionRequestsReceived = AsyncHandler(async (req, res: Response<ApiResponse>) => {
-  // Get logged in user's data
   const loggedInUser = req.user;
 
-  // Find all the connection requests received
   const allRequestsReceived = await ConnectionRequestModel.find({
     receiverId: loggedInUser._id,
     status: "interested"
@@ -20,7 +17,6 @@ const connectionRequestsReceived = AsyncHandler(async (req, res: Response<ApiRes
     .select("senderId")
     .populate({ path: "senderId", select: USER_SAFE_DATA });
 
-  // Return the response
   res.status(200).json({
     success: true,
     message: "Fetched connection requests received successfully",
@@ -28,12 +24,9 @@ const connectionRequestsReceived = AsyncHandler(async (req, res: Response<ApiRes
   });
 });
 
-// All connections
 const allConnections = AsyncHandler(async (req, res: Response<ApiResponse>) => {
-  // Get logged in user's data
   const loggedInUser = req.user;
 
-  // Find all the connected users
   const allConnections = await ConnectionRequestModel.find({
     $or: [
       { senderId: loggedInUser._id, status: "accepted" },
@@ -44,7 +37,6 @@ const allConnections = AsyncHandler(async (req, res: Response<ApiResponse>) => {
     { path: "receiverId", select: USER_SAFE_DATA }
   ]);
 
-  // Send only the connected user's data
   const allConnectionsData = allConnections.map((connection) => {
     if (String(connection.senderId._id) === String(loggedInUser._id)) {
       return connection.receiverId;
@@ -53,7 +45,6 @@ const allConnections = AsyncHandler(async (req, res: Response<ApiResponse>) => {
     }
   });
 
-  // Return the response
   res.status(200).json({
     success: true,
     message: "Fetched all connections successfully",
@@ -61,21 +52,16 @@ const allConnections = AsyncHandler(async (req, res: Response<ApiResponse>) => {
   });
 });
 
-// User Feed
 const userFeed = AsyncHandler(async (req: Request, res: Response<ApiResponse>) => {
-  // Get logged in user's data
   const loggedInUser = req.user;
 
-  // Get Pagination data
   const { page, limit } = await PaginationSchema.validate(req.query, { abortEarly: false, stripUnknown: true });
   const skip = (page - 1) * limit;
 
-  // Get all the users connected to logged in user
   const allConnectedUsers = await ConnectionRequestModel.find({
     $or: [{ senderId: loggedInUser._id }, { receiverId: loggedInUser._id }]
   });
 
-  // Hide the connected users from logged in user
   const usersToHideFromFeed = new Set();
   allConnectedUsers.forEach((connection) => {
     usersToHideFromFeed.add(connection.senderId._id.toString());
@@ -83,7 +69,6 @@ const userFeed = AsyncHandler(async (req: Request, res: Response<ApiResponse>) =
   });
   usersToHideFromFeed.add(loggedInUser._id);
 
-  // Show all the users except for the hidden users
   const usersToBeShownOnFeed = await UserModel.find({
     _id: { $nin: Array.from(usersToHideFromFeed) }
   })
@@ -91,12 +76,10 @@ const userFeed = AsyncHandler(async (req: Request, res: Response<ApiResponse>) =
     .skip(skip)
     .limit(limit);
 
-  // Count the total number of users
   const totalUsers = await UserModel.countDocuments({
     _id: { $nin: Array.from(usersToHideFromFeed) }
   });
 
-  // Return the response
   res.status(200).json({
     success: true,
     message: "Fetched feed successfully",

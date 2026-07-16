@@ -1,7 +1,6 @@
 import * as yup from "yup";
 import { emailSchema, passwordSchema } from "./common.schema";
 
-// Signup schema
 export const SignupSchema = yup.object({
   name: yup
     .string()
@@ -22,9 +21,8 @@ export const SignupSchema = yup.object({
 });
 export type SignupSchemaType = yup.InferType<typeof SignupSchema>;
 
-// Login schema
 export const LoginSchema = yup.object({
   email: emailSchema,
-  password: passwordSchema
+  password: yup.string().trim().required("Please provide a password")
 });
 export type LoginSchemaType = yup.InferType<typeof LoginSchema>;

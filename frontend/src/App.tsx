@@ -26,14 +26,11 @@ const App = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Replace this URL with your actual endpoint that returns the logged-in user's profile
         const res = await axiosInstance.get("/profile/view");
         addUser(res.data.data);
-      } catch (error) {
-        // If it fails (e.g. 401 Unauthorized), the cookie is missing or invalid
-        console.log("Not logged in");
+      } catch {
+        console.error("Not logged in");
       } finally {
-        // Done checking, safe to render the app
         setAuthChecking(false);
       }
     };
@@ -127,4 +124,3 @@ const App = () => {
 };
 
 export default App;
-

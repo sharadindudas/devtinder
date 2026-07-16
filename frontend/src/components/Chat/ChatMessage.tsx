@@ -7,7 +7,7 @@ const ChatMessage = ({ message }: { message: Message }) => {
   const fromMe = user?._id === message.senderId._id;
   const chatClassName = fromMe ? "chat-end" : "chat-start";
   const photoUrl = fromMe ? user.photoUrl : message.senderId.photoUrl;
-  const formattedTime = new Date(message.createdAt).toLocaleDateString([], { hour: "2-digit", minute: "2-digit" });
+  const formattedTime = new Date(message.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   return (
     <div className={`chat ${chatClassName}`}>

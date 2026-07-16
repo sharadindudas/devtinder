@@ -24,7 +24,7 @@ const useLogout = () => {
       }
     } catch (err) {
       if (err instanceof AxiosError) {
-        toast.error(err.message);
+        toast.error(err.response?.data.message || err.message);
       }
     } finally {
       toast.dismiss(toastId);

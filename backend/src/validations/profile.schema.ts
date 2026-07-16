@@ -1,7 +1,6 @@
 import * as yup from "yup";
 import { passwordSchema } from "./common.schema";
 
-// Edit profile schema
 export const EditProfileSchema = yup.object({
   age: yup
     .number()
@@ -31,7 +30,6 @@ export const EditProfileSchema = yup.object({
 });
 export type EditProfileSchemaType = yup.InferType<typeof EditProfileSchema>;
 
-// Change password schema
 export const ChangePasswordSchema = yup.object({
   oldPassword: passwordSchema,
   newPassword: passwordSchema

@@ -15,7 +15,6 @@ const useConnectSocket = (userId: string) => {
   const hasUserInteracted = useRef<boolean>(false);
   const navigate = useNavigate();
 
-  // Handle user interaction before playing the audio
   useEffect(() => {
     const handleUserInteraction = () => {
       hasUserInteracted.current = true;
@@ -29,7 +28,6 @@ const useConnectSocket = (userId: string) => {
     };
   }, []);
 
-  // Create a socket connection
   useEffect(() => {
     if (!socketRef.current) {
       socketRef.current = io(import.meta.env.VITE_BACKEND_URL, { withCredentials: true });
@@ -42,7 +40,6 @@ const useConnectSocket = (userId: string) => {
     };
   }, []);
 
-  // Join the room and receive messages
   useEffect(() => {
     if (!user?._id || !userId || !socketRef.current) return;
 
@@ -79,7 +76,6 @@ const useConnectSocket = (userId: string) => {
     };
   }, [user, userId, navigate, updateMessages]);
 
-  // Send message in the room
   const sendMessage = (messageData: { message: string; senderId: string; receiverId: string }) => {
     if (socketRef.current) {
       socketRef.current.emit("sendMessage", messageData);

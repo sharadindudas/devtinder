@@ -24,7 +24,6 @@ export const passwordSchema = yup
       })
   );
 
-// Pagination schema
 export const PaginationSchema = yup.object({
   page: yup
     .number()

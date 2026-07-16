@@ -1,7 +1,6 @@
 import * as yup from "yup";
 import { Types } from "mongoose";
 
-// Send connection request schema
 export const SendConnectionRequestSchema = yup.object({
   userId: yup
     .string()
@@ -14,7 +13,6 @@ export const SendConnectionRequestSchema = yup.object({
 });
 export type SendConnectionRequestSchemaType = yup.InferType<typeof SendConnectionRequestSchema>;
 
-// Review connection request schema
 export const ReviewConnectionRequestSchema = yup.object({
   requestId: yup
     .string()

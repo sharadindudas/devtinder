@@ -5,7 +5,7 @@ import { useGlobalStore } from "../store/useStore";
 import { axiosInstance } from "../utils/axiosInstance";
 
 const useGetAllMessages = (userId: string) => {
-  const { addMessages } = useGlobalStore();
+  const { addMessages, clearMessages } = useGlobalStore();
 
   useEffect(() => {
     const fetchAllMessages = async () => {
@@ -21,7 +21,9 @@ const useGetAllMessages = (userId: string) => {
       }
     };
     fetchAllMessages();
-  }, [addMessages, userId]);
+
+    return () => clearMessages();
+  }, [addMessages, clearMessages, userId]);
 };
 
 export default useGetAllMessages;
