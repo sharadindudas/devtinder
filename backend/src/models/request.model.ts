@@ -1,8 +1,8 @@
-import { Document, ObjectId, Schema, models, model } from "mongoose";
+import { Document, Types, Schema, models, model } from "mongoose";
 import { User } from "./user.model";
 
 interface ConnectionRequest extends Document {
-  _id: ObjectId;
+  _id: Types.ObjectId;
   senderId: User;
   receiverId: User;
   status: string;
@@ -33,7 +33,6 @@ const connectionRequestSchema: Schema<ConnectionRequest> = new Schema(
   { timestamps: true, versionKey: false }
 );
 
-// Compound indexing
-connectionRequestSchema.index({ senderId: 1, receiverId: 1 });
+connectionRequestSchema.index({ senderId: 1, receiverId: 1 }, { unique: true });
 
 export const ConnectionRequestModel = models.ConnectionRequest || model<ConnectionRequest>("ConnectionRequest", connectionRequestSchema);

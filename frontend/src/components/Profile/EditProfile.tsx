@@ -51,7 +51,6 @@ const EditProfile = ({ user }: { user: User }) => {
           noValidate
           onSubmit={handleSubmit(onSubmit)}
           className="mt-6 space-y-6 text-sm">
-          {/* Name */}
           <div className="form-control w-full space-y-1">
             <label
               htmlFor="name"
@@ -68,7 +67,6 @@ const EditProfile = ({ user }: { user: User }) => {
             />
           </div>
 
-          {/* Email */}
           <div className="form-control w-full space-y-1">
             <label
               htmlFor="email"
@@ -85,7 +83,6 @@ const EditProfile = ({ user }: { user: User }) => {
             />
           </div>
 
-          {/* Profile Photo */}
           <div className="flex flex-col items-center sm:flex-row sm:items-start gap-4">
             <div className="avatar">
               <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
@@ -114,7 +111,6 @@ const EditProfile = ({ user }: { user: User }) => {
             </div>
           </div>
 
-          {/* Gender */}
           <div className="form-control space-y-1">
             <label className="label">
               <span className="label-text">Gender</span>
@@ -141,7 +137,6 @@ const EditProfile = ({ user }: { user: User }) => {
             </div>
           </div>
 
-          {/* Age */}
           <div className="form-control w-full space-y-1">
             <label className="label">
               <span className="label-text">Age</span>
@@ -158,7 +153,6 @@ const EditProfile = ({ user }: { user: User }) => {
             </div>
           </div>
 
-          {/* Skills */}
           <div className="form-control w-full space-y-1">
             <label className="label">
               <span className="label-text">Skills (Enter up to 5 skills, separated by commas)</span>
@@ -179,7 +173,6 @@ const EditProfile = ({ user }: { user: User }) => {
             />
           </div>
 
-          {/* About */}
           <div className="form-control w-full space-y-1">
             <label className="label">
               <span className="label-text">About Me</span>

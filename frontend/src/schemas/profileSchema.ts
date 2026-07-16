@@ -2,7 +2,6 @@ import * as yup from "yup";
 
 import { ageSchema, genderSchema } from "./commonSchema";
 
-// Edit profile schema
 export const EditProfileSchema = yup.object({
   age: ageSchema,
   gender: genderSchema,

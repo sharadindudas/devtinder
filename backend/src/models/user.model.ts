@@ -1,10 +1,10 @@
-import { Document, ObjectId, Schema, models, model } from "mongoose";
+import { Document, Types, Schema, models, model } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config/config";
 
 export interface User extends Document {
-  _id: ObjectId;
+  _id: Types.ObjectId;
   name: string;
   email: string;
   password: string;
@@ -27,7 +27,10 @@ const userSchema: Schema<User> = new Schema(
     },
     email: {
       type: String,
-      required: true
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true
     },
     password: {
       type: String,
@@ -56,7 +59,6 @@ const userSchema: Schema<User> = new Schema(
   { timestamps: true, versionKey: false }
 );
 
-// Hash the password
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
@@ -64,12 +66,10 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// Validate of password
 userSchema.methods.validatePassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
-// Generate jwt
 userSchema.methods.generateJWT = function () {
   return jwt.sign(
     {

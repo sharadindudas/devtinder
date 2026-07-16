@@ -1,27 +1,24 @@
-import { Document, ObjectId, Schema, models, model } from "mongoose";
+import { Document, Types, Schema, models, model } from "mongoose";
 import { User } from "./user.model";
-import { Message } from "./message.model";
 
-interface Chat extends Document {
-  _id: ObjectId;
+export interface Chat extends Document {
+  _id: Types.ObjectId;
+  roomId: string;
   participants: [User];
-  messages: [Message];
 }
 
 const chatSchema: Schema<Chat> = new Schema(
   {
+    roomId: {
+      type: String,
+      required: true,
+      unique: true
+    },
     participants: [
       {
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true
-      }
-    ],
-    messages: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Message",
-        default: []
       }
     ]
   },

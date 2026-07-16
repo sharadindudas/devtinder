@@ -1,16 +1,33 @@
 import http from "http";
 import crypto from "crypto";
-import { Server } from "socket.io";
-import { FRONTEND_URL } from "../config/config";
+import { Server, Socket } from "socket.io";
+import jwt from "jsonwebtoken";
+import { FRONTEND_URL, JWT_SECRET } from "../config/config";
 import { ConnectionRequestModel } from "../models/request.model";
-import { ErrorHandler } from "./handlers";
 import { ChatModel } from "../models/chat.model";
 import { MessageModel } from "../models/message.model";
+import { DecodedPayload } from "../@types/types";
 import { logger } from "./logger";
 
-// Create unique room id
 const getRoomId = (senderId: string, receiverId: string) => {
   return crypto.createHash("sha256").update([senderId, receiverId].sort().join("$")).digest("hex").slice(0, 10);
+};
+
+const parseCookies = (cookieHeader = ""): Record<string, string> => {
+  return cookieHeader.split(";").reduce<Record<string, string>>((acc, part) => {
+    const [key, ...rest] = part.trim().split("=");
+    if (key) acc[key] = decodeURIComponent(rest.join("="));
+    return acc;
+  }, {});
+};
+
+const areConnected = async (senderId: string, receiverId: string) => {
+  return ConnectionRequestModel.findOne({
+    $or: [
+      { senderId, receiverId, status: "accepted" },
+      { senderId: receiverId, receiverId: senderId, status: "accepted" }
+    ]
+  });
 };
 
 export const initializeSocket = (server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>) => {
@@ -22,71 +39,70 @@ export const initializeSocket = (server: http.Server<typeof http.IncomingMessage
     }
   });
 
-  io.on("connection", (socket) => {
+  io.use((socket, next) => {
+    try {
+      const { devtinderToken } = parseCookies(socket.handshake.headers.cookie);
+      if (!devtinderToken) {
+        return next(new Error("Please login to continue"));
+      }
+      const decoded = jwt.verify(devtinderToken, JWT_SECRET) as DecodedPayload;
+      socket.data.userId = decoded._id;
+      next();
+    } catch {
+      next(new Error("Invalid or expired session"));
+    }
+  });
+
+  io.on("connection", (socket: Socket) => {
+    const senderId: string = socket.data.userId;
     logger.info("User connected", socket.id);
 
-    socket.on("joinChat", async ({ name, senderId, receiverId }) => {
+    socket.on("joinChat", async ({ receiverId }: { receiverId: string }) => {
       try {
-        // Check if both the users are connected or not
-        const connectionRequestExists = await ConnectionRequestModel.findOne({
-          $or: [
-            { senderId, receiverId, status: "accepted" },
-            { senderId: receiverId, receiverId: senderId, status: "accepted" }
-          ]
-        });
-        if (!connectionRequestExists) {
+        if (!receiverId) return;
+
+        const connectionExists = await areConnected(senderId, receiverId);
+        if (!connectionExists) {
           socket.emit("error", "You are not connected to the user");
           return;
         }
 
-        // Create and join the room
         const roomId = getRoomId(senderId, receiverId);
         socket.join(roomId);
-        console.log(`${name} joined the room: ${roomId}`);
       } catch (err) {
-        if (err instanceof Error) {
-          throw new ErrorHandler(err.message, 400);
-        }
+        socket.emit("error", err instanceof Error ? err.message : "Failed to join chat");
       }
     });
 
-    socket.on("sendMessage", async ({ message, senderId, receiverId }) => {
+    socket.on("sendMessage", async ({ message, receiverId }: { message: string; receiverId: string }) => {
       try {
-        // Check if the chat between both users exists or not
-        let chatExists = await ChatModel.findOne({
-          participants: { $all: [senderId, receiverId] }
-        });
-        // If chat doesn't exists, create a new chat
-        if (!chatExists) {
-          chatExists = new ChatModel({
-            participants: [senderId, receiverId]
-          });
+        if (!message?.trim() || !receiverId) return;
+
+        const connectionExists = await areConnected(senderId, receiverId);
+        if (!connectionExists) {
+          socket.emit("error", "You are not connected to the user");
+          return;
         }
 
-        // Create a new message
-        const newMessage = new MessageModel({
+        const roomId = getRoomId(senderId, receiverId);
+
+        const chat = await ChatModel.findOneAndUpdate(
+          { roomId },
+          { $setOnInsert: { roomId, participants: [senderId, receiverId] } },
+          { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+
+        const newMessage = await MessageModel.create({
+          chatId: chat._id,
           senderId,
-          receiverId,
           message
         });
-        // If new message is created, push it to chat messages
-        if (newMessage) {
-          chatExists.messages.push(newMessage._id);
-        }
 
-        // Save all the data
-        await Promise.all([chatExists.save(), newMessage.save()]);
-
-        // Send the message data
         const newMessageData = await newMessage.populate({ path: "senderId", select: "name photoUrl" });
 
-        // Create and send the message to the room
-        const roomId = getRoomId(senderId, receiverId);
         io.to(roomId).emit("messageReceived", newMessageData);
       } catch (err) {
-        if (err instanceof Error) {
-          throw new ErrorHandler(err.message, 400);
-        }
+        socket.emit("error", err instanceof Error ? err.message : "Failed to send message");
       }
     });
 

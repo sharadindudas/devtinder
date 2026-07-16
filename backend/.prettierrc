@@ -6,5 +6,5 @@
   "bracketSameLine": true,
   "printWidth": 150,
   "singleAttributePerLine": true,
-  "endOfLine": "crlf"
+  "endOfLine": "lf"
 }
