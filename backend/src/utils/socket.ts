@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { Server, Socket } from "socket.io";
 import jwt from "jsonwebtoken";
 import { FRONTEND_URL, JWT_SECRET } from "../config/config";
-import { ConnectionRequestModel } from "../models/request.model";
+import { RequestModel } from "../models/request.model";
 import { ChatModel } from "../models/chat.model";
 import { MessageModel } from "../models/message.model";
 import { DecodedPayload } from "../@types/types";
@@ -22,7 +22,7 @@ const parseCookies = (cookieHeader = ""): Record<string, string> => {
 };
 
 const areConnected = async (senderId: string, receiverId: string) => {
-  return ConnectionRequestModel.findOne({
+  return RequestModel.findOne({
     $or: [
       { senderId, receiverId, status: "accepted" },
       { senderId: receiverId, receiverId: senderId, status: "accepted" }
